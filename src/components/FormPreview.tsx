@@ -33,7 +33,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
 
   return (
     <div className="flex-1 overflow-y-auto px-6 py-8 flex h-full justify-center">
-      <div className="w-full max-w-[600px] bg-bg-elevated rounded-[24px] border border-border-default overflow-hidden shadow-lg">
+      <div className="w-full max-w-[600px] bg-bg-elevated border border-border-default overflow-auto shadow-lg">
         {/* Form header */}
         <div
           className="px-8 pt-7 pb-5 border-b border-border-default"
@@ -123,6 +123,13 @@ const PreviewField: React.FC<{
             {field.options?.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
         );
+
+        case 'button':
+          return(
+            <button onClick={()=>{onChange(true)}} className='px-4 py-2.5 bg-[var(--accent)] border-0 rounded-md text-white font-semibold text-[13px] transition shadow-[var(--shadow--accent)]'>
+              {field.placeholder||"button"}
+            </button>
+          )
 
       case 'multiselect':
         return (
