@@ -99,7 +99,7 @@
 import React, { useState } from 'react';
 import { FormField, FormSchema } from '../types';
 import { motion } from 'framer-motion';
-
+import Select from 'react-select';
 interface FormPreviewProps {
   schema: FormSchema;
 }
@@ -248,15 +248,50 @@ const PreviewField: React.FC<{
 
       case 'select':
         return (
-          <select
-            value={(value as string) || ''}
-            onChange={e => onChange(e.target.value)}
-            disabled={field.disabled}
-            className={`${inputClass} cursor-pointer`}
-          >
-            <option value="">-- Select --</option>
-            {field.options?.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-          </select>
+          <Select
+            options={field.options?.map(o => ({
+              label: o.label,
+              value: o.value
+            }))}
+            styles={{
+              control: (base) => ({
+                ...base,
+                backgroundColor: '#000',
+                borderColor: '#333',
+                color: '#fff',
+              }),
+              menu: (base) => ({
+                ...base,
+                backgroundColor: '#000',
+              }),
+              option: (base, state) => ({
+                ...base,
+                backgroundColor: state.isFocused ? '#222' : '#000',
+                color: '#fff',
+                padding: 12,
+                height: 50,
+              }),
+              singleValue: (base) => ({
+                ...base,
+                color: '#fff',
+              }),
+              input: (base) => ({
+                ...base,
+                color: '#fff',
+              }),
+              placeholder: (base) => ({
+                ...base,
+                color: '#888',
+              }),
+              dropdownIndicator: (base) => ({
+                ...base,
+                color: '#fff',
+              }),
+              indicatorSeparator: () => ({
+                display: 'none',
+              }),
+            }}
+          />
         );
 
         case 'button':

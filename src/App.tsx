@@ -88,10 +88,7 @@ export default function App() {
               WebkitTextFillColor: 'transparent',
               letterSpacing: '-0.02em',
             }}
-          >FormForge</span>
-          <span className="text-[10px] font-bold tracking-widest uppercase text-accent bg-[rgba(108,99,255,0.1)] px-[7px] py-[2px] rounded-full border border-border-focus">
-            ADMIN
-          </span>
+          >FormBuilder</span>
         </div>
 
         {/* Tab switcher */}
