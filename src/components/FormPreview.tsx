@@ -114,13 +114,8 @@ const viewWidths: Record<ViewMode, string> = {
 };
 
 export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
-<<<<<<< HEAD
   const rows = schema.form.rows || [];
   const fields = rows.flatMap(row => row.columns.map(col => col.field).filter(Boolean) as FormField[]);
-=======
-  const [viewMode, setViewMode] = useState<ViewMode>('laptop');
-  const fields = schema.form.fields || [];
->>>>>>> 6ab9370 (draggable and 3 screens)
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -144,7 +139,6 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
   }
 
   return (
-<<<<<<< HEAD
     <div className="flex-1 overflow-y-auto px-6 py-8 flex h-full justify-center">
       <div className="w-full max-w-[600px] bg-bg-elevated border border-border-default overflow-auto shadow-lg">
         <div
@@ -196,85 +190,6 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
             {submitted ? '? Submitted!' : (schema.form.submitLabel || 'Submit')}
           </button>
         </div>
-=======
-    <div className="flex-1 flex flex-col h-full bg-bg-base overflow-hidden">
-      {/* Device Toggle Header */}
-      <div className="h-14 border-b border-border-default flex items-center justify-center gap-2 bg-bg-surface">
-        {(['laptop', 'tablet', 'mobile'] as ViewMode[]).map((mode) => (
-          <button
-            key={mode}
-            onClick={() => setViewMode(mode)}
-            className={`px-3 py-1.5 rounded-md text-[12px] font-medium transition-all ${
-              viewMode === mode 
-                ? 'bg-accent text-white shadow-md' 
-                : 'text-text-muted hover:bg-bg-overlay'
-            }`}
-          >
-            {mode.charAt(0).toUpperCase() + mode.slice(1)}
-          </button>
-        ))}
-      </div>
-
-      {/* Preview Area */}
-      <div className="flex-1 overflow-y-auto p-8 flex justify-center bg-bg-surface">
-        <motion.div 
-          animate={{ width: viewWidths[viewMode] }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="h-fit bg-bg-elevated border border-border-default shadow-xl rounded-xl overflow-hidden max-w-[800px]"
-        >
-          {/* Form header */}
-          <div
-            className="px-8 pt-7 pb-5 border-b border-border-default"
-            style={{ background: 'linear-gradient(135deg, #1e1e28 0%, #18181f 100%)' }}
-          >
-            <h2 className="font-display text-[22px] font-bold text-text-primary">
-              {schema.form.title || "Untitled Form"}
-            </h2>
-            {schema.form.description && (
-              <p className="text-[13px] text-text-secondary mt-1">{schema.form.description}</p>
-            )}
-          </div>
-
-          {/* Fields - Responsive wrapping */}
-          <div className="px-8 py-6 flex flex-wrap gap-4">
-            {fields.map(field => (
-              <div
-                key={field.id}
-                className="transition-all duration-300"
-                style={{
-                  // Force full width on mobile regardless of setting
-                  width: viewMode === 'mobile' ? '100%' : 
-                         field.width === 'half' ? 'calc(50% - 8px)' :
-                         field.width === 'third' ? 'calc(33.3% - 11px)' : '100%',
-                }}
-              >
-                <PreviewField
-                  field={field}
-                  value={values[field.id]}
-                  onChange={v => updateValue(field.id, v)}
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* Footer */}
-          <div className="px-8 pb-6 pt-4 flex gap-[10px] justify-end border-t border-border-default">
-            <button 
-              className="px-5 py-[9px] bg-transparent border border-border-default rounded-[10px] text-text-secondary font-display font-semibold text-[13px] cursor-pointer">
-                {schema.form.cancelLabel || 'Cancel'}
-          </button>
-            <button
-              onClick={handleSubmit}
-              className="px-6 py-2.5 rounded-lg text-white font-bold text-[13px] transition-all"
-              style={{
-                background: submitted ? '#00d4aa' : '#6c63ff',
-              }}
-            >
-              {submitted ? '✓ Submitted!' : (schema.form.submitLabel || 'Submit')}
-            </button>
-          </div>
-        </motion.div>
->>>>>>> 6ab9370 (draggable and 3 screens)
       </div>
     </div>
   );
