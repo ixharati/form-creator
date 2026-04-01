@@ -118,3 +118,32 @@ button {
   pointer-events: none;
   border-radius: inherit;
 }
+
+/* ── Resizable Panel Styles ── */
+[data-panel-group-direction="horizontal"] > [data-panel-resize-handle-id] {
+  width: 4px;
+  background: var(--border-light, #32323f);
+  cursor: col-resize;
+  position: relative;
+  transition: all 200ms ease;
+}
+
+[data-panel-group-direction="horizontal"] > [data-panel-resize-handle-id]:hover {
+  background: var(--accent, #6c63ff);
+  box-shadow: 0 0 12px rgba(108, 99, 255, 0.4), inset 0 0 8px rgba(108, 99, 255, 0.2);
+  width: 6px;
+}
+
+[data-panel-group-direction="horizontal"] > [data-panel-resize-handle-id][data-resize-handle-state="drag"] {
+  background: var(--accent, #6c63ff);
+  box-shadow: 0 0 16px rgba(108, 99, 255, 0.6), inset 0 0 12px rgba(108, 99, 255, 0.3);
+}
+
+/* Smooth panel transitions */
+[data-panel-group] {
+  overflow: hidden;
+}
+
+[data-panel] {
+  overflow: hidden;
+}

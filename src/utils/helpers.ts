@@ -97,7 +97,7 @@ export const createDefaultField = (type: FieldType, id: string): FormField => {
     validation: { required: false },
     width: 'full',
   };
-  if (['select', 'multiselect', 'radio'].includes(type)) {
+  if (['select', 'multiselect', 'radio', 'checkbox'].includes(type)) {
     base.options = [
       { label: 'Option 1', value: 'option_1' },
       { label: 'Option 2', value: 'option_2' },

@@ -3,6 +3,21 @@ import { FormField, FieldType } from '../types';
 import { FieldCard } from './FieldCard';
 import { FIELD_LABELS } from '../utils/helpers';
 import { createDefaultField, generateFieldId } from '../utils/helpers';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 
 interface BuilderCanvasProps {
   fields: FormField[];
@@ -11,6 +26,7 @@ interface BuilderCanvasProps {
   onDeleteField: (id: string) => void;
   onMoveField: (id: string, dir: 'up' | 'down') => void;
   onAddField: (type: FieldType) => void;
+  onReorderFields?: (reorderedFields: FormField[]) => void;
   formTitle: string;
 }
 
@@ -21,9 +37,31 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({
   onDeleteField,
   onMoveField,
   onAddField,
+  onReorderFields,
   formTitle,
 }) => {
   const [dragOver, setDragOver] = React.useState(false);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      distance: 8,
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = fields.findIndex(f => f.id === active.id);
+      const newIndex = fields.findIndex(f => f.id === over.id);
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const reordered = arrayMove(fields, oldIndex, newIndex);
+        onReorderFields(reordered);
+      }
+    }
+  };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -33,34 +71,39 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({
   };
 
   return (
-    <div
-      className="flex-1 overflow-hidden flex flex-col bg-bg-base"
-      onDragOver={e => { e.preventDefault(); setDragOver(true); }}
-      onDragLeave={() => setDragOver(false)}
-      onDrop={handleDrop}
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
     >
-      {/* Canvas header */}
-      <div className="px-5 py-[14px] border-b border-border-default bg-bg-surface flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-[10px]">
-          <div
-            className="w-2 h-2 rounded-full bg-accent"
-            style={{ boxShadow: '0 0 8px var(--accent, #6c63ff)' }}
-          />
-          <span className="font-display text-[14px] font-bold text-text-primary">
-            {formTitle || 'Form Builder'}
+      <div
+        className="flex-1 overflow-hidden flex flex-col bg-bg-base"
+        onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={handleDrop}
+      >
+        {/* Canvas header */}
+        <div className="px-5 py-[14px] border-b border-border-default bg-bg-surface flex items-center justify-between flex-shrink-0">
+          <div className="flex items-center gap-[10px]">
+            <div
+              className="w-2 h-2 rounded-full bg-accent"
+              style={{ boxShadow: '0 0 8px var(--accent, #6c63ff)' }}
+            />
+            <span className="font-display text-[14px] font-bold text-text-primary">
+              {formTitle || 'Form Builder'}
+            </span>
+          </div>
+          <span className="text-[11px] text-text-muted bg-bg-overlay px-[10px] py-[3px] rounded-full border border-border-default">
+            {fields.length} field{fields.length !== 1 ? 's' : ''}
           </span>
         </div>
-        <span className="text-[11px] text-text-muted bg-bg-overlay px-[10px] py-[3px] rounded-full border border-border-default">
-          {fields.length} field{fields.length !== 1 ? 's' : ''}
-        </span>
-      </div>
 
-      {/* Drop zone / field list */}
-      <div
-        className={`flex-1 overflow-y-auto p-5 flex flex-col gap-2 ${
-          dragOver ? 'outline outline-2 outline-dashed outline-accent -outline-offset-1 rounded-[10px]' : ''
-        }`}
-      >
+        {/* Drop zone / field list */}
+        <div
+          className={`flex-1 overflow-y-auto p-5 flex flex-col gap-2 ${
+            dragOver ? 'outline outline-2 outline-dashed outline-accent -outline-offset-1 rounded-[10px]' : ''
+          }`}
+        >
         {fields.length === 0 ? (
           <div
             className={`flex-1 flex flex-col items-center justify-center gap-[14px] p-10 border-2 border-dashed border-border-default rounded-[24px] transition-all duration-200 min-h-[300px] ${
@@ -88,27 +131,33 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({
           </div>
         ) : (
           <>
-            {fields.map((field, idx) => (
-              <FieldCard
-                key={field.id}
-                field={field}
-                index={idx}
-                isSelected={selectedId === field.id}
-                onSelect={() => onSelectField(field.id)}
-                onDelete={() => onDeleteField(field.id)}
-                onMoveUp={() => onMoveField(field.id, 'up')}
-                onMoveDown={() => onMoveField(field.id, 'down')}
-                isFirst={idx === 0}
-                isLast={idx === fields.length - 1}
-              />
-            ))}
+            <SortableContext
+              items={fields.map(f => f.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {fields.map((field, idx) => (
+                <FieldCard
+                  key={field.id}
+                  field={field}
+                  index={idx}
+                  isSelected={selectedId === field.id}
+                  onSelect={() => onSelectField(field.id)}
+                  onDelete={() => onDeleteField(field.id)}
+                  onMoveUp={() => onMoveField(field.id, 'up')}
+                  onMoveDown={() => onMoveField(field.id, 'down')}
+                  isFirst={idx === 0}
+                  isLast={idx === fields.length - 1}
+                />
+              ))}
+            </SortableContext>
             {/* Drop hint at bottom */}
             <div className="border border-dashed border-border-default rounded-[10px] p-3 text-center text-text-muted text-[11px] mt-1">
-              + Click field type to add more
+              🔄 Drag fields to reorder · + Click to add more
             </div>
           </>
         )}
+        </div>
       </div>
-    </div>
+    </DndContext>
   );
 };

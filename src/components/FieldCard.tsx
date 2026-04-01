@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FormField } from '../types';
 import { FIELD_ICONS, FIELD_LABELS } from '../utils/helpers';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface FieldCardProps {
   field: FormField;
@@ -27,8 +29,24 @@ export const FieldCard: React.FC<FieldCardProps> = ({
   const [hovered, setHovered] = useState(false);
   const color = typeColors[field.type] || '#6c63ff';
 
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: field.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   return (
     <div
+      ref={setNodeRef}
       onClick={onSelect}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -38,8 +56,9 @@ export const FieldCard: React.FC<FieldCardProps> = ({
         border: isSelected ? `1px solid ${color}60` : '1px solid #2a2a38',
         boxShadow: isSelected
           ? `0 0 0 2px ${color}30, 0 4px 16px rgba(0,0,0,0.4)`
-          : hovered ? '0 1px 3px rgba(0,0,0,0.5)' : 'none',
+          : hovered ? '0 1px 3px rgba(0,0,0,0.5)' : isDragging ? '0 8px 24px rgba(0,0,0,0.7)' : 'none',
         animation: 'fadeIn 0.2s ease both',
+        ...(style as any),
       }}
     >
       {/* Left accent bar */}
@@ -50,7 +69,7 @@ export const FieldCard: React.FC<FieldCardProps> = ({
         />
       )}
 
-      <div className="flex items-center gap-[10px]">
+      <div className="flex items-center gap-[10px]" {...attributes} {...listeners}>
         {/* Type badge */}
         <div
           className="w-8 h-8 flex items-center justify-center rounded-[6px] text-[13px] flex-shrink-0 font-bold"

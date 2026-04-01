@@ -9,6 +9,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
   const fields = schema.form.fields || [];
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [viewMode, setViewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
 
   const updateValue = (id: string, val: unknown) => {
     setValues(v => ({ ...v, [id]: val }));
@@ -32,8 +33,44 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto px-6 py-8 flex h-full justify-center">
-      <div className="w-full max-w-[600px] bg-bg-elevated border border-border-default overflow-auto shadow-lg">
+    <div className="flex-1 overflow-y-auto px-6 py-8 flex flex-col h-full">
+      {/* View Mode Selector */}
+      <div className="flex gap-2 mb-4 justify-center">
+        <button
+          onClick={() => setViewMode('desktop')}
+          className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors ${
+            viewMode === 'desktop' ? 'bg-accent text-white' : 'bg-bg-base text-text-secondary border border-border-default'
+          }`}
+        >
+          🖥️ Desktop
+        </button>
+        <button
+          onClick={() => setViewMode('tablet')}
+          className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors ${
+            viewMode === 'tablet' ? 'bg-accent text-white' : 'bg-bg-base text-text-secondary border border-border-default'
+          }`}
+        >
+          📱 Tablet
+        </button>
+        <button
+          onClick={() => setViewMode('mobile')}
+          className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors ${
+            viewMode === 'mobile' ? 'bg-accent text-white' : 'bg-bg-base text-text-secondary border border-border-default'
+          }`}
+        >
+          📱 Mobile
+        </button>
+      </div>
+
+      {/* Form Preview */}
+      <div className="flex justify-center flex-1">
+        <div
+          className={`w-full ${
+            viewMode === 'desktop' ? 'max-w-[600px]' :
+            viewMode === 'tablet' ? 'max-w-[768px]' :
+            'max-w-[375px]'
+          } bg-bg-elevated border border-border-default overflow-auto shadow-lg`}
+        >
         {/* Form header */}
         <div
           className="px-8 pt-7 pb-5 border-b border-border-default"
@@ -83,6 +120,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
           </button>
         </div>
       </div>
+    </div>
     </div>
   );
 };

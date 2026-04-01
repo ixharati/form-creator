@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { FormSchema, FormField, FieldType, ActiveTab } from './types';
+import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";import { FormSchema, FormField, FieldType, ActiveTab } from './types';
 import { INITIAL_SCHEMA, createDefaultField, generateFieldId, downloadJSON } from './utils/helpers';
 import { FieldPalette } from './components/FieldPalette';
 import { BuilderCanvas } from './components/BuilderCanvas';
@@ -47,6 +47,10 @@ export default function App() {
   const handleFieldChange = useCallback((updated: FormField) => {
     updateFields(fields.map(f => f.id === updated.id ? updated : f));
   }, [fields, updateFields]);
+
+  const handleReorderFields = useCallback((reorderedFields: FormField[]) => {
+    updateFields(reorderedFields);
+  }, [updateFields]);
 
   const handleSelectField = useCallback((id: string) => {
     setSelectedFieldId(id);
@@ -119,55 +123,78 @@ export default function App() {
       </header>
 
       {/* ── Main Body ── */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 overflow-hidden">
 
         {/* Builder layout */}
         {activeTab === 'builder' && (
-          <>
+          <PanelGroup direction="horizontal" className="w-full h-full">
             {/* Left: Field Palette */}
-            <FieldPalette onAddField={handleAddField} />
+            <Panel defaultSize={15} minSize={10} maxSize={30} className="overflow-hidden">
+              <FieldPalette onAddField={handleAddField} />
+            </Panel>
+
+            {/* Resize handle between palette and canvas */}
+            <PanelResizeHandle 
+              className="w-1 transition-all duration-200 cursor-col-resize"
+              style={{
+                background: 'var(--border-light, #32323f)',
+              }}
+            />
 
             {/* Center: Canvas */}
-            <BuilderCanvas
-              fields={fields}
-              selectedId={selectedFieldId}
-              onSelectField={handleSelectField}
-              onDeleteField={handleDeleteField}
-              onMoveField={handleMoveField}
-              onAddField={handleAddField}
-              formTitle={schema.form.title || schema.form.key}
+            <Panel defaultSize={60} minSize={30} className="overflow-hidden">
+              <BuilderCanvas
+                fields={fields}
+                selectedId={selectedFieldId}
+                onSelectField={handleSelectField}
+                onDeleteField={handleDeleteField}
+                onMoveField={handleMoveField}
+                onAddField={handleAddField}
+                onReorderFields={handleReorderFields}
+                formTitle={schema.form.title || schema.form.key}
+              />
+            </Panel>
+
+            {/* Resize handle between canvas and editor */}
+            <PanelResizeHandle 
+              className="w-1 transition-all duration-200 cursor-col-resize"
+              style={{
+                background: 'var(--border-light, #32323f)',
+              }}
             />
 
             {/* Right: Editor Panel */}
-            <aside className="w-[260px] min-w-[260px] bg-bg-surface border-l border-border-default flex flex-col overflow-hidden">
-              {/* Panel tab switcher */}
-              <div className="flex border-b border-border-default flex-shrink-0">
-                {(['settings', 'field'] as const).map(panel => (
-                  <button
-                    key={panel}
-                    onClick={() => setRightPanel(panel)}
-                    className={`flex-1 py-[10px] px-2 font-display font-semibold text-[11px] cursor-pointer transition-all duration-200 tracking-[0.06em] uppercase border-b-2 border-t-0 border-l-0 border-r-0 ${
-                      rightPanel === panel
-                        ? 'bg-bg-elevated border-accent text-text-primary'
-                        : 'bg-transparent border-transparent text-text-muted'
-                    }`}
-                  >
-                    {panel === 'settings' ? '⚙ Form' : '✎ Field'}
-                  </button>
-                ))}
-              </div>
+            <Panel defaultSize={25} minSize={15} maxSize={50} className="overflow-hidden bg-bg-surface border-l border-border-default flex flex-col">
+              <aside className="h-full flex flex-col overflow-hidden">
+                {/* Panel tab switcher */}
+                <div className="flex border-b border-border-default flex-shrink-0">
+                  {(['settings', 'field'] as const).map(panel => (
+                    <button
+                      key={panel}
+                      onClick={() => setRightPanel(panel)}
+                      className={`flex-1 py-[10px] px-2 font-display font-semibold text-[11px] cursor-pointer transition-all duration-200 tracking-[0.06em] uppercase border-b-2 border-t-0 border-l-0 border-r-0 ${
+                        rightPanel === panel
+                          ? 'bg-bg-elevated border-accent text-text-primary'
+                          : 'bg-transparent border-transparent text-text-muted'
+                      }`}
+                    >
+                      {panel === 'settings' ? '⚙ Form' : '✎ Field'}
+                    </button>
+                  ))}
+                </div>
 
-              <div className="flex-1 overflow-hidden">
-                {rightPanel === 'settings' ? (
-                  <FormSettings schema={schema} onChange={setSchema} />
-                ) : selectedField ? (
-                  <FieldEditor field={selectedField} onChange={handleFieldChange} />
-                ) : (
-                  <NoFieldSelected onShowSettings={() => setRightPanel('settings')} />
-                )}
-              </div>
-            </aside>
-          </>
+                <div className="flex-1 overflow-hidden">
+                  {rightPanel === 'settings' ? (
+                    <FormSettings schema={schema} onChange={setSchema} />
+                  ) : selectedField ? (
+                    <FieldEditor field={selectedField} onChange={handleFieldChange} />
+                  ) : (
+                    <NoFieldSelected onShowSettings={() => setRightPanel('settings')} />
+                  )}
+                </div>
+              </aside>
+            </Panel>
+          </PanelGroup>
         )}
 
         {/* Preview tab */}

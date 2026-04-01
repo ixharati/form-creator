@@ -27,7 +27,7 @@ const typeColors: Record<string, string> = {
 
 export const FieldPalette: React.FC<FieldPaletteProps> = ({ onAddField }) => {
   return (
-    <aside className="w-[220px] min-w-[220px] bg-bg-surface border-r border-border-default flex flex-col overflow-hidden">
+    <aside className="h-full w-full bg-bg-surface flex flex-col overflow-hidden">
       <div className="px-4 pt-5 pb-3 border-b border-border-default">
         <p className="font-display text-[11px] font-bold tracking-[0.12em] uppercase text-text-muted">Field Types</p>
       </div>
@@ -40,9 +40,14 @@ export const FieldPalette: React.FC<FieldPaletteProps> = ({ onAddField }) => {
               {group.fields.map(type => (
                 <button
                   key={type}
+                  draggable
+                  onDragStart={(e) => {
+                    e.dataTransfer.effectAllowed = 'copy';
+                    e.dataTransfer.setData('fieldType', type);
+                  }}
                   onClick={() => onAddField(type)}
-                  className="flex items-center gap-[9px] px-[10px] py-[7px] bg-transparent border border-transparent rounded-[6px] text-text-secondary text-[13px] cursor-pointer transition-all duration-200 text-left w-full font-body hover:bg-bg-overlay hover:border-border-default hover:text-text-primary"
-                  title={`Add ${FIELD_LABELS[type]}`}
+                  className="flex items-center gap-[9px] px-[10px] py-[7px] bg-transparent border border-transparent rounded-[6px] text-text-secondary text-[13px] cursor-move transition-all duration-200 text-left w-full font-body hover:bg-bg-overlay hover:border-border-default hover:text-text-primary active:opacity-70"
+                  title={`Add ${FIELD_LABELS[type]} (click or drag)`}
                 >
                   <span
                     className="w-[26px] h-[26px] flex items-center justify-center rounded-[6px] text-[12px] flex-shrink-0 font-bold"
