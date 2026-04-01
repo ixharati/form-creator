@@ -124,7 +124,7 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({
                 </p>
               </div>
               <div className="flex gap-2 flex-wrap justify-center max-w-[300px]">
-                {(['text', 'select', 'checkbox', 'date'] as FieldType[]).map(type => (
+                {(['text', 'select', 'checkbox', 'datetime'] as FieldType[]).map(type => (
                   <button
                     key={type}
                     onClick={() => onAddField(type)}
