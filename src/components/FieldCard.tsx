@@ -50,7 +50,7 @@ export const FieldCard: React.FC<FieldCardProps> = ({
       onClick={onSelect}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="rounded-[10px] px-4 py-[14px] cursor-pointer transition-all duration-200 relative"
+      className="rounded-[10px] px-4 py-[14px] cursor-pointer transition-all duration-200 relative flex-shrink-0"
       style={{
         background: isSelected ? '#1e1e28' : '#18181f',
         border: isSelected ? `1px solid ${color}60` : '1px solid #2a2a38',
@@ -118,6 +118,7 @@ export const FieldCard: React.FC<FieldCardProps> = ({
           <div
             className="flex items-center gap-[2px]"
             onClick={e => e.stopPropagation()}
+            data-no-dnd
           >
             <ActionBtn title="Move up" disabled={isFirst} onClick={onMoveUp}>↑</ActionBtn>
             <ActionBtn title="Move down" disabled={isLast} onClick={onMoveDown}>↓</ActionBtn>

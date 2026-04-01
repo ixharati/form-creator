@@ -142,7 +142,7 @@ export default function App() {
             />
 
             {/* Center: Canvas */}
-            <Panel defaultSize={60} minSize={30} className="overflow-hidden">
+            <Panel defaultSize={60} minSize={30} className="overflow-hidden h-full">
               <BuilderCanvas
                 fields={fields}
                 selectedId={selectedFieldId}
