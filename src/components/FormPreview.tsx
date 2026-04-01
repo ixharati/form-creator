@@ -1,11 +1,120 @@
+// import React, { useState } from 'react';
+// import { FormField, FormSchema } from '../types';
+// import Select from 'react-select/base';
+
+// interface FormPreviewProps {
+//   schema: FormSchema;
+// }
+
+// export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
+//   const fields = schema.form.fields || [];
+//   const [values, setValues] = useState<Record<string, unknown>>({});
+//   const [submitted, setSubmitted] = useState(false);
+
+//   const updateValue = (id: string, val: unknown) => {
+//     setValues(v => ({ ...v, [id]: val }));
+//   };
+
+//   // const handleCancel = () => {
+//   //   setValues({});
+//   //   setSubmitted(false);
+//   // };
+
+//   const handleSubmit = () => {
+//     setSubmitted(true);
+//     setTimeout(() => setSubmitted(false), 3000);
+//   };
+
+//   if (fields.length === 0) {
+//     return (
+//       <div className="flex-1 flex flex-col items-center justify-center gap-3 text-text-muted p-10">
+//         <div className="text-[48px]">◻</div>
+//         <p className="font-display text-[16px] font-semibold">No fields yet</p>
+//         <p className="text-[13px] text-center max-w-[280px]">
+//           Add fields from the left panel to see your form preview here.
+//         </p>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="flex-1 overflow-y-auto px-6 py-8 flex h-full justify-center">
+//       <div className="w-full max-w-[600px] bg-bg-elevated border border-border-default overflow-auto shadow-lg">
+//         {/* Form header */}
+//         <div
+//           className="px-8 pt-7 pb-5 border-b border-border-default"
+//           style={{ background: 'linear-gradient(135deg, #1e1e28 0%, #18181f 100%)' }}
+//         >
+//           <h2 className="font-display text-[22px] font-bold text-text-primary" style={{ marginBottom: schema.form.description ? 6 : 0 }}>
+//             {schema.form.title || schema.form.key}
+//           </h2>
+//           {schema.form.description && (
+//             <p className="text-[13px] text-text-secondary">{schema.form.description}</p>
+//           )}
+//         </div>
+
+//         {/* Fields */}
+//         <div className="px-8 py-6 flex flex-wrap gap-4">
+//           {fields.map(field => (
+//             <div
+//               key={field.id}
+//               style={{
+//                 width: field.width === 'half' ? 'calc(50% - 8px)' :
+//                        field.width === 'third' ? 'calc(33.3% - 11px)' : '100%',
+//               }}
+//             >
+//               <PreviewField
+//                 field={field}
+//                 value={values[field.id]}
+//                 onChange={v => updateValue(field.id, v)}
+//               />
+//             </div>
+//           ))}
+//         </div>
+
+//         {/* Footer */}
+//         <div className="px-8 pb-6 pt-4 flex gap-[10px] justify-end border-t border-border-default">
+//           {/* <button onClick={handleCancel}
+//           className="px-5 py-[9px] bg-transparent border border-border-default rounded-[10px] text-text-secondary font-display font-semibold text-[13px] cursor-pointer">
+//             {schema.form.cancelLabel || 'Cancel'}
+//           </button> */}
+//           <button
+//             onClick={handleSubmit}
+//             className="px-5 py-[9px] border-none rounded-[10px] text-white font-display font-bold text-[13px] cursor-pointer transition-all duration-200"
+//             style={{
+//               background: submitted ? '#00d4aa' : '#6c63ff',
+//               boxShadow: submitted ? '0 4px 16px rgba(0,212,170,0.4)' : '0 4px 20px rgba(108,99,255,0.25)',
+//             }}
+//           >
+//             {submitted ? '✓ Submitted!' : (schema.form.submitLabel || 'Submit')}
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+
+
 import React, { useState } from 'react';
 import { FormField, FormSchema } from '../types';
+import { motion } from 'framer-motion';
 import Select from 'react-select';
 interface FormPreviewProps {
   schema: FormSchema;
 }
 
+// Define the available screen sizes
+type ViewMode = 'laptop' | 'tablet' | 'mobile';
+
+const viewWidths: Record<ViewMode, string> = {
+  laptop: '100%', // Max-width 800px
+  tablet: '640px',
+  mobile: '375px',
+};
+
 export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
+  const [viewMode, setViewMode] = useState<ViewMode>('laptop');
   const fields = schema.form.fields || [];
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -24,68 +133,94 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
       <div className="flex-1 flex flex-col items-center justify-center gap-3 text-text-muted p-10">
         <div className="text-[48px]">◻</div>
         <p className="font-display text-[16px] font-semibold">No fields yet</p>
-        <p className="text-[13px] text-center max-w-[280px]">
-          Add fields from the left panel to see your form preview here.
-        </p>
+        <p className="text-[13px]">Add fields to see your preview here.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 overflow-y-auto px-6 py-8 flex h-full justify-center">
-      <div className="w-full max-w-[600px] bg-bg-elevated border border-border-default overflow-auto shadow-lg">
-        {/* Form header */}
-        <div
-          className="px-8 pt-7 pb-5 border-b border-border-default"
-          style={{ background: 'linear-gradient(135deg, #1e1e28 0%, #18181f 100%)' }}
-        >
-          <h2 className="font-display text-[22px] font-bold text-text-primary" style={{ marginBottom: schema.form.description ? 6 : 0 }}>
-            {schema.form.title || schema.form.key}
-          </h2>
-          {schema.form.description && (
-            <p className="text-[13px] text-text-secondary">{schema.form.description}</p>
-          )}
-        </div>
+    <div className="flex-1 flex flex-col h-full bg-bg-base overflow-hidden">
+      {/* Device Toggle Header */}
+      <div className="h-14 border-b border-border-default flex items-center justify-center gap-2 bg-bg-surface">
+        {(['laptop', 'tablet', 'mobile'] as ViewMode[]).map((mode) => (
+          <button
+            key={mode}
+            onClick={() => setViewMode(mode)}
+            className={`px-3 py-1.5 rounded-md text-[12px] font-medium transition-all ${
+              viewMode === mode 
+                ? 'bg-accent text-white shadow-md' 
+                : 'text-text-muted hover:bg-bg-overlay'
+            }`}
+          >
+            {mode.charAt(0).toUpperCase() + mode.slice(1)}
+          </button>
+        ))}
+      </div>
 
-        {/* Fields */}
-        <div className="px-8 py-6 flex flex-wrap gap-4">
-          {fields.map(field => (
-            <div
-              key={field.id}
+      {/* Preview Area */}
+      <div className="flex-1 overflow-y-auto p-8 flex justify-center bg-bg-surface">
+        <motion.div 
+          animate={{ width: viewWidths[viewMode] }}
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          className="h-fit bg-bg-elevated border border-border-default shadow-xl rounded-xl overflow-hidden max-w-[800px]"
+        >
+          {/* Form header */}
+          <div
+            className="px-8 pt-7 pb-5 border-b border-border-default"
+            style={{ background: 'linear-gradient(135deg, #1e1e28 0%, #18181f 100%)' }}
+          >
+            <h2 className="font-display text-[22px] font-bold text-text-primary">
+              {schema.form.title || "Untitled Form"}
+            </h2>
+            {schema.form.description && (
+              <p className="text-[13px] text-text-secondary mt-1">{schema.form.description}</p>
+            )}
+          </div>
+
+          {/* Fields - Responsive wrapping */}
+          <div className="px-8 py-6 flex flex-wrap gap-4">
+            {fields.map(field => (
+              <div
+                key={field.id}
+                className="transition-all duration-300"
+                style={{
+                  // Force full width on mobile regardless of setting
+                  width: viewMode === 'mobile' ? '100%' : 
+                         field.width === 'half' ? 'calc(50% - 8px)' :
+                         field.width === 'third' ? 'calc(33.3% - 11px)' : '100%',
+                }}
+              >
+                <PreviewField
+                  field={field}
+                  value={values[field.id]}
+                  onChange={v => updateValue(field.id, v)}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Footer */}
+          <div className="px-8 pb-6 pt-4 flex gap-[10px] justify-end border-t border-border-default">
+            <button 
+              className="px-5 py-[9px] bg-transparent border border-border-default rounded-[10px] text-text-secondary font-display font-semibold text-[13px] cursor-pointer">
+                {schema.form.cancelLabel || 'Cancel'}
+          </button>
+            <button
+              onClick={handleSubmit}
+              className="px-6 py-2.5 rounded-lg text-white font-bold text-[13px] transition-all"
               style={{
-                width: field.width === 'half' ? 'calc(50% - 8px)' :
-                       field.width === 'third' ? 'calc(33.3% - 11px)' : '100%',
+                background: submitted ? '#00d4aa' : '#6c63ff',
               }}
             >
-              <PreviewField
-                field={field}
-                value={values[field.id]}
-                onChange={v => updateValue(field.id, v)}
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Footer */}
-        <div className="px-8 pb-6 pt-4 flex gap-[10px] justify-end border-t border-border-default">
-          <button className="px-5 py-[9px] bg-transparent border border-border-default rounded-[10px] text-text-secondary font-display font-semibold text-[13px] cursor-pointer">
-            {schema.form.cancelLabel || 'Cancel'}
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="px-5 py-[9px] border-none rounded-[10px] text-white font-display font-bold text-[13px] cursor-pointer transition-all duration-200"
-            style={{
-              background: submitted ? '#00d4aa' : '#6c63ff',
-              boxShadow: submitted ? '0 4px 16px rgba(0,212,170,0.4)' : '0 4px 20px rgba(108,99,255,0.25)',
-            }}
-          >
-            {submitted ? '✓ Submitted!' : (schema.form.submitLabel || 'Submit')}
-          </button>
-        </div>
+              {submitted ? '✓ Submitted!' : (schema.form.submitLabel || 'Submit')}
+            </button>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
 };
+
 
 const inputClass = "w-full px-3 py-[9px] bg-bg-base border border-border-default rounded-[6px] text-text-primary text-[13px] outline-none font-body transition-colors duration-150 focus:border-border-focus focus:shadow-[0_0_0_3px_rgba(108,99,255,0.1)]";
 const labelClass = "block text-[12px] font-semibold text-text-secondary mb-[6px] tracking-[0.02em]";
