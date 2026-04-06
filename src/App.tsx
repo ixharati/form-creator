@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react';
-import { FormSchema, FormField, FieldType, ActiveTab } from './types';
-import { INITIAL_SCHEMA, createDefaultField, generateFieldId, downloadJSON } from './utils/helpers';
+import React, { useState, useCallback, useEffect } from 'react';
+import { FormSchema, FormField, FieldType, ActiveTab, FormRow } from './types';
+import { INITIAL_SCHEMA, createDefaultField, generateFieldId, downloadJSON, migrateFieldsToRows, getAllFields, createDefaultRow } from './utils/helpers';
 import { FieldPalette } from './components/FieldPalette';
 import { BuilderCanvas } from './components/BuilderCanvas';
 import { FieldEditor } from './components/FieldEditor';
@@ -14,39 +14,93 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('builder');
   const [rightPanel, setRightPanel] = useState<'field' | 'settings'>('settings');
 
-  const fields = schema.form.fields || [];
+  // Migrate legacy fields to rows on load
+  useEffect(() => {
+    if (schema.form.fields && schema.form.fields.length > 0 && !schema.form.rows) {
+      const rows = migrateFieldsToRows(schema.form.fields);
+      setSchema(s => ({ ...s, form: { ...s.form, rows, fields: undefined } }));
+    }
+  }, [schema.form.fields, schema.form.rows]);
+
+  const rows = schema.form.rows || [];
+  const fields = getAllFields(rows);
   const selectedField = fields.find(f => f.id === selectedFieldId) || null;
 
-  const updateFields = useCallback((next: FormField[]) => {
-    setSchema(s => ({ ...s, form: { ...s.form, fields: next } }));
+  const updateRows = useCallback((next: FormRow[]) => {
+    setSchema(s => ({ ...s, form: { ...s.form, rows: next } }));
   }, []);
 
   const handleAddField = useCallback((type: FieldType) => {
     const id = generateFieldId();
     const field = createDefaultField(type, id);
-    updateFields([...fields, field]);
+    // Add to first empty column, or create new row
+    const newRows = [...rows];
+    let added = false;
+    for (const row of newRows) {
+      for (const col of row.columns) {
+        if (!col.field) {
+          col.field = field;
+          added = true;
+          break;
+        }
+      }
+      if (added) break;
+    }
+    if (!added) {
+      // Create new row with single column
+      const newRow = createDefaultRow([100]);
+      newRow.columns[0].field = field;
+      newRows.push(newRow);
+    }
+    updateRows(newRows);
     setSelectedFieldId(id);
     setRightPanel('field');
-  }, [fields, updateFields]);
+  }, [rows, updateRows]);
 
   const handleDeleteField = useCallback((id: string) => {
-    updateFields(fields.filter(f => f.id !== id));
+    const newRows = rows.map(row => ({
+      ...row,
+      columns: row.columns.map(col => col.field?.id === id ? { ...col, field: undefined } : col)
+    }));
+    updateRows(newRows);
     if (selectedFieldId === id) setSelectedFieldId(null);
-  }, [fields, selectedFieldId, updateFields]);
+  }, [rows, selectedFieldId, updateRows]);
 
   const handleMoveField = useCallback((id: string, dir: 'up' | 'down') => {
-    const idx = fields.findIndex(f => f.id === id);
+    // For now, simple move within rows
+    const allFields = getAllFields(rows);
+    const idx = allFields.findIndex(f => f.id === id);
     if (idx === -1) return;
-    const next = [...fields];
     const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
-    if (swapIdx < 0 || swapIdx >= next.length) return;
-    [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]];
-    updateFields(next);
-  }, [fields, updateFields]);
+    if (swapIdx < 0 || swapIdx >= allFields.length) return;
+    // Swap fields
+    const field1 = allFields[idx];
+    const field2 = allFields[swapIdx];
+    const newRows = rows.map(row => ({
+      ...row,
+      columns: row.columns.map(col => {
+        if (col.field?.id === field1.id) return { ...col, field: field2 };
+        if (col.field?.id === field2.id) return { ...col, field: field1 };
+        return col;
+      })
+    }));
+    updateRows(newRows);
+  }, [rows, updateRows]);
+
+  const handleAddRow = useCallback((columnWidths: number[]) => {
+    const newRow = createDefaultRow(columnWidths);
+    updateRows([...rows, newRow]);
+  }, [rows, updateRows]);
 
   const handleFieldChange = useCallback((updated: FormField) => {
-    updateFields(fields.map(f => f.id === updated.id ? updated : f));
-  }, [fields, updateFields]);
+    const newRows = rows.map(row => ({
+      ...row,
+      columns: row.columns.map(col =>
+        col.field?.id === updated.id ? { ...col, field: updated } : col
+      )
+    }));
+    updateRows(newRows);
+  }, [rows, updateRows]);
 
   const handleSelectField = useCallback((id: string) => {
     setSelectedFieldId(id);
@@ -60,7 +114,7 @@ export default function App() {
 
   const handleClearAll = () => {
     if (fields.length === 0 || confirm('Clear all fields?')) {
-      updateFields([]);
+      updateRows([]);
       setSelectedFieldId(null);
     }
   };
@@ -80,7 +134,7 @@ export default function App() {
           >F</div>
           <span
             className="font-display font-extrabold text-base tracking-tight"
-          >FormBuilder</span>
+          >FormCreator</span>
         </div>
 
         {/* Tab switcher */}
@@ -119,17 +173,18 @@ export default function App() {
         {activeTab === 'builder' && (
           <>
             {/* Left: Field Palette */}
-            <FieldPalette onAddField={handleAddField} />
+            <FieldPalette onAddField={handleAddField} onAddRow={handleAddRow} />
             
 
             {/* Center: Canvas */}
             <BuilderCanvas
-              fields={fields}
+              rows={rows}
               selectedId={selectedFieldId}
               onSelectField={handleSelectField}
               onDeleteField={handleDeleteField}
               onMoveField={handleMoveField}
               onAddField={handleAddField}
+              onReorderRows={updateRows}
               formTitle={schema.form.title || schema.form.key}
             />
 

@@ -9,8 +9,8 @@ export type FieldType =
   | 'button'
   | 'checkbox'
   | 'radio'
-  | 'date'
-  | 'time'
+  // | 'date'
+  // | 'time'
   | 'datetime'
   | 'toggle'
   | 'range'
@@ -59,6 +59,17 @@ export interface FormField {
   style?:FieldStyle;
 }
 
+export interface FormColumn {
+  id: string;
+  width: number; // percentage, e.g., 50, 33, 100
+  field?: FormField;
+}
+
+export interface FormRow {
+  id: string;
+  columns: FormColumn[];
+}
+
 export interface FormSection {
   id: string;
   title: string;
@@ -78,7 +89,8 @@ export interface FormSchema {
     title?: string;
     description?: string;
     sections?: FormSection[];
-    fields?: FormField[];
+    fields?: FormField[]; // legacy, for migration
+    rows?: FormRow[]; // new layout system
     submitLabel?: string;
     cancelLabel?: false;
     layout?: 'single' | 'wizard';

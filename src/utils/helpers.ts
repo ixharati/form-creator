@@ -1,4 +1,4 @@
-import { FormField, FieldType, FormSchema } from '../types';
+import { FormField, FieldType, FormSchema, FormRow, FormColumn } from '../types';
 
 export const INITIAL_SCHEMA: FormSchema = {
   version: '1',
@@ -11,7 +11,7 @@ export const INITIAL_SCHEMA: FormSchema = {
     title: 'My Form',
     description: '',
     sections: [],
-    fields: [],
+    rows: [],
     submitLabel: 'Submit',
     cancelLabel: false,
     layout: 'single',
@@ -67,6 +67,7 @@ export const FIELD_LABELS: Record<FieldType, string> = {
   toggle: 'Toggle',
   range: 'Range Slider',
   file: 'File Upload',
+  
 };
 
 export const FIELD_GROUPS = [
@@ -122,3 +123,26 @@ export const downloadJSON = (schema: FormSchema) => {
 
 export const generateSectionId = () => `section_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
 export const generateFieldId = () => `field_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+export const generateRowId = () => `row_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+export const generateColumnId = () => `col_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+
+export const createDefaultRow = (columnWidths: number[]): FormRow => {
+  const rowId = generateRowId();
+  const columns: FormColumn[] = columnWidths.map(width => ({
+    id: generateColumnId(),
+    width,
+    field: undefined,
+  }));
+  return { id: rowId, columns };
+};
+
+export const migrateFieldsToRows = (fields: FormField[]): FormRow[] => {
+  return fields.map(field => ({
+    id: generateRowId(),
+    columns: [{ id: generateColumnId(), width: 100, field }],
+  }));
+};
+
+export const getAllFields = (rows: FormRow[]): FormField[] => {
+  return rows.flatMap(row => row.columns.map(col => col.field).filter(Boolean) as FormField[]);
+};

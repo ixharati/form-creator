@@ -6,7 +6,8 @@ interface FormPreviewProps {
 }
 
 export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
-  const fields = schema.form.fields || [];
+  const rows = schema.form.rows || [];
+  const fields = rows.flatMap(r => r.columns.map(c => c.field).filter(Boolean) as FormField[]);
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -48,22 +49,22 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
         </div>
 
         {/* Fields */}
-        <div className="px-8 py-6 flex flex-wrap gap-4">
-          {fields.map(field => {
-            const fieldWidth = field.width ? `${field.width}px` : '100%';
-            return (
-              <div
-                key={field.id}
-                style={{ width: fieldWidth }}
-              >
-                <PreviewField
-                  field={field}
-                  value={values[field.id]}
-                  onChange={v => updateValue(field.id, v)}
-                />
-              </div>
-            );
-          })}
+        <div className="px-8 py-6 flex flex-col gap-4">
+          {rows.map(row => (
+            <div key={row.id} className="flex gap-4">
+              {row.columns.map(col => (
+                <div key={col.id} style={{ width: `${col.width}%` }}>
+                  {col.field && (
+                    <PreviewField
+                      field={col.field}
+                      value={values[col.field.id]}
+                      onChange={v => updateValue(col.field!.id, v)}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
 
         {/* Footer */}

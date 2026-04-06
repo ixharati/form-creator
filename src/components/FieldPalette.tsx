@@ -5,12 +5,13 @@ import { motion } from 'framer-motion';
 
 interface FieldPaletteProps {
   onAddField: (type: FieldType) => void;
+  onAddRow?: (columnWidths: number[]) => void;
 }
 
 //  Single theme color system (green-based)
 const PRIMARY = '#ffbe0b';
 
-export const FieldPalette: React.FC<FieldPaletteProps> = ({ onAddField }) => {
+export const FieldPalette: React.FC<FieldPaletteProps> = ({ onAddField, onAddRow }) => {
   return (
     <motion.aside className="w-[400px] bg-white border-r border-[#d6e5dd] flex flex-col overflow-hidden">
       
@@ -20,6 +21,38 @@ export const FieldPalette: React.FC<FieldPaletteProps> = ({ onAddField }) => {
           Field Types
         </p>
       </div>
+
+      {/* Layout Controls */}
+      {onAddRow && (
+        <div className="px-[10px] py-3 border-b border-[#d6e5dd]">
+          <p className="font-bold tracking-[0.1em] uppercase mb-[6px] pl-[6px] text-[11px]">
+            Layout
+          </p>
+          <div className="flex flex-col gap-[4px]">
+            <button
+              onClick={() => onAddRow([100])}
+              className="flex items-center gap-[9px] px-[10px] py-[8px] rounded-[8px] text-[13px] w-full text-left font-body transition-all duration-200 border border-transparent text-[#3a5f4a] hover:bg-[rgba(6,64,40,0.08)] hover:border-[#d6e5dd] hover:text-[#064028] active:scale-[0.98]"
+            >
+              <span className="w-[26px] h-[26px] flex items-center justify-center rounded-[6px] text-[12px] flex-shrink-0 font-bold" style={{ background: 'rgba(6,64,40,0.08)', color: PRIMARY, border: '1px solid rgba(6,64,40,0.2)' }}>□</span>
+              <span className="font-medium text-[#064028]">Single Column</span>
+            </button>
+            <button
+              onClick={() => onAddRow([50, 50])}
+              className="flex items-center gap-[9px] px-[10px] py-[8px] rounded-[8px] text-[13px] w-full text-left font-body transition-all duration-200 border border-transparent text-[#3a5f4a] hover:bg-[rgba(6,64,40,0.08)] hover:border-[#d6e5dd] hover:text-[#064028] active:scale-[0.98]"
+            >
+              <span className="w-[26px] h-[26px] flex items-center justify-center rounded-[6px] text-[12px] flex-shrink-0 font-bold" style={{ background: 'rgba(6,64,40,0.08)', color: PRIMARY, border: '1px solid rgba(6,64,40,0.2)' }}>⬌</span>
+              <span className="font-medium text-[#064028]">Two Columns</span>
+            </button>
+            <button
+              onClick={() => onAddRow([33, 33, 34])}
+              className="flex items-center gap-[9px] px-[10px] py-[8px] rounded-[8px] text-[13px] w-full text-left font-body transition-all duration-200 border border-transparent text-[#3a5f4a] hover:bg-[rgba(6,64,40,0.08)] hover:border-[#d6e5dd] hover:text-[#064028] active:scale-[0.98]"
+            >
+              <span className="w-[26px] h-[26px] flex items-center justify-center rounded-[6px] text-[12px] flex-shrink-0 font-bold" style={{ background: 'rgba(6,64,40,0.08)', color: PRIMARY, border: '1px solid rgba(6,64,40,0.2)' }}>⧉</span>
+              <span className="font-medium text-[#064028]">Three Columns</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Field List */}
       <div className="flex-1 overflow-y-auto px-[10px] py-3">
