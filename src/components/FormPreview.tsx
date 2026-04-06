@@ -175,13 +175,14 @@ const PreviewField: React.FC<{
                   isMulti={isMulti}
                   options = {options}
                   value={selectedValue}
-                  
+
 
                   onChange={(selected: MultiValue<any> | SingleValue<any>) => {
                     if (isMulti) {
                       onChange((selected as MultiValue<any>).map(s => s.value));
                     } else {
                       onChange((selected as SingleValue<any>)?.value || null);
+
                     }
                   }}
                   menuPortalTarget={document.body}
