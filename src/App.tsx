@@ -130,6 +130,7 @@ export default function App() {
               onDeleteField={handleDeleteField}
               onMoveField={handleMoveField}
               onAddField={handleAddField}
+              onReorderFields={updateFields}
               formTitle={schema.form.title || schema.form.key}
             />
 
