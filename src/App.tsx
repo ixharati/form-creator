@@ -7,46 +7,128 @@ import { FieldEditor } from './components/FieldEditor';
 import { FormSettings } from './components/FormSettings';
 import { FormPreview } from './components/FormPreview';
 import { JSONView } from './components/JSONView';
+import { generateSectionId } from './utils/helpers';
+
 
 export default function App() {
+  const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
   const [schema, setSchema] = useState<FormSchema>(INITIAL_SCHEMA);
   const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<ActiveTab>('builder');
   const [rightPanel, setRightPanel] = useState<'field' | 'settings'>('settings');
-
+  const fields= schema.form.sections?.flatMap(s => s.fields) || [];
   const sections = schema.form.sections || [];
-  const selectedField = sections.find(f => f.id === selectedFieldId) || null;
+  const activeSection = sections.find(s => s.id === activeSectionId);
+  const selectedField =
+    sections
+      .flatMap(section => section.fields)
+      .find(f => f.id === selectedFieldId) || null;
 
-  const updateFields = useCallback((next: FormField[]) => {
-    setSchema(s => ({ ...s, form: { ...s.form, fields: next } }));
-  }, []);
+  // const updateFields = useCallback((next: FormField[]) => {
+  //   setSchema(s => ({ ...s, form: { ...s.form, fields: next } }));
+  // }, []);
+
+  const handleAddSection = () => {
+    const newSection = {
+      id: generateSectionId(),
+      title: `Section ${sections.length + 1}`,
+      fields: [],
+    };
+
+    setSchema(s => ({
+      ...s,
+      form: {
+        ...s.form,
+        sections: [...(s.form.sections || []), newSection],
+      },
+    }));
+
+    setActiveSectionId(newSection.id);
+  };
 
   const handleAddField = useCallback((type: FieldType) => {
+    if (!activeSectionId) {
+      alert("Please create/select a section first");
+      return;
+    }
+
     const id = generateFieldId();
     const field = createDefaultField(type, id);
-    updateFields([...fields, field]);
+
+    setSchema(s => ({
+      ...s,
+      form: {
+        ...s.form,
+        sections: s.form.sections?.map(section =>
+          section.id === activeSectionId
+            ? { ...section, fields: [...section.fields, field] }
+            : section
+        ),
+      },
+    }));
+
     setSelectedFieldId(id);
     setRightPanel('field');
-  }, [fields, updateFields]);
+  }, [activeSectionId]);
+
+  // const handleAddField = useCallback((type: FieldType) => {
+  //   const id = generateFieldId();
+  //   const field = createDefaultField(type, id);
+  //   updateFields([...fields, field]);
+  //   setSelectedFieldId(id);
+  //   setRightPanel('field');
+  // }, [fields, updateFields]);
+
+  // const handleDeleteField = useCallback((id: string) => {
+  //   updateFields(fields.filter(f => f.id !== id));
+  //   if (selectedFieldId === id) setSelectedFieldId(null);
+  // }, [fields, selectedFieldId, updateFields]);
+
 
   const handleDeleteField = useCallback((id: string) => {
-    updateFields(fields.filter(f => f.id !== id));
-    if (selectedFieldId === id) setSelectedFieldId(null);
-  }, [fields, selectedFieldId, updateFields]);
+    setSchema(prev => ({
+      ...prev,
+      form: {
+        ...prev.form,
+        sections: prev.form.sections?.map(section => ({
+          ...section,
+          fields: section.fields.filter(f => f.id !== id),
+        })),
+      },
+    }));
 
-  const handleMoveField = useCallback((id: string, dir: 'up' | 'down') => {
-    const idx = fields.findIndex(f => f.id === id);
-    if (idx === -1) return;
-    const next = [...fields];
-    const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
-    if (swapIdx < 0 || swapIdx >= next.length) return;
-    [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]];
-    updateFields(next);
-  }, [fields, updateFields]);
+    if (selectedFieldId === id) setSelectedFieldId(null);
+  }, [selectedFieldId]);
+
+  // const handleMoveField = useCallback((id: string, dir: 'up' | 'down') => {
+  //   const idx = fields.findIndex(f => f.id === id);
+  //   if (idx === -1) return;
+  //   const next = [...fields];
+  //   const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
+  //   if (swapIdx < 0 || swapIdx >= next.length) return;
+  //   [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]];
+  //   updateFields(next);
+  // }, [fields, updateFields]);
+
+  // const handleFieldChange = useCallback((updated: FormField) => {
+  //   updateFields(fields.map(f => f.id === updated.id ? updated : f));
+  // }, [fields, updateFields]);
+
 
   const handleFieldChange = useCallback((updated: FormField) => {
-    updateFields(fields.map(f => f.id === updated.id ? updated : f));
-  }, [fields, updateFields]);
+    setSchema(prev => ({
+      ...prev,
+      form: {
+        ...prev.form,
+        sections: prev.form.sections?.map(section => ({
+          ...section,
+          fields: section.fields.map(f =>
+            f.id === updated.id ? updated : f
+          ),
+        })),
+      },
+    }));
+  }, []);
 
   const handleSelectField = useCallback((id: string) => {
     setSelectedFieldId(id);
@@ -58,9 +140,29 @@ export default function App() {
     setSelectedFieldId(null);
   }, []);
 
+  // const handleClearAll = () => {
+  //   if (fields.length === 0 || confirm('Clear all fields?')) {
+  //     updateFields([]);
+  //     setSelectedFieldId(null);
+  //   }
+  // };
+
+
   const handleClearAll = () => {
-    if (fields.length === 0 || confirm('Clear all fields?')) {
-      updateFields([]);
+    if (
+      sections.length === 0 ||
+      confirm('Clear all fields?')
+    ) {
+      setSchema(prev => ({
+        ...prev,
+        form: {
+          ...prev.form,
+          sections: prev.form.sections?.map(section => ({
+            ...section,
+            fields: [],
+          })),
+        },
+      }));
       setSelectedFieldId(null);
     }
   };
@@ -122,17 +224,56 @@ export default function App() {
             <FieldPalette onAddField={handleAddField} />
             
 
+            {/* Center: Sections + Canvas */}
+            <div className="flex flex-col w-full">
+
+              {/* Section Header */}
+              <div className="p-3 border-b flex gap-2 bg-white">
+                <button
+                  onClick={handleAddSection}
+                  className="px-3 py-1 bg-[#ffbe0b] text-white rounded"
+                >
+                  + Add Section
+                </button>
+
+                {sections.map(section => (
+                  <button
+                    key={section.id}
+                    onClick={() => setActiveSectionId(section.id)}
+                    className={`px-3 py-1 rounded ${
+                      activeSectionId === section.id
+                        ? 'bg-[#ffbe0b] text-white'
+                        : 'bg-gray-100 text-black'
+                    }`}
+                  >
+                    {section.title}
+                  </button>
+                ))}
+              </div>
+
+              {/* Canvas */}
+              <BuilderCanvas
+                fields={activeSection ? activeSection.fields : []}
+                selectedId={selectedFieldId}
+                onSelectField={handleSelectField}
+                onDeleteField={handleDeleteField}
+                onMoveField={() => {}}
+                onAddField={handleAddField}
+                formTitle={activeSection?.title || "No Section Selected"}
+              />
+
+            </div>
+
             {/* Center: Canvas */}
-            <BuilderCanvas
-              fields={fields}
+            {/* <BuilderCanvas
+              fields={activeSection?.fields || []}
               selectedId={selectedFieldId}
               onSelectField={handleSelectField}
               onDeleteField={handleDeleteField}
-              onMoveField={handleMoveField}
+              onMoveField={() => {}}
               onAddField={handleAddField}
-              onReorderFields={updateFields}
               formTitle={schema.form.title || schema.form.key}
-            />
+            /> */}
 
             {/* Right: Editor Panel */}
             <aside className="w-[260px] min-w-[260px] bg-white border-l border-[#e0e0e0] flex flex-col overflow-hidden">
