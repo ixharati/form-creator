@@ -31,20 +31,32 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
   };
 
   const handleSubmit = () => {
-    if (activeSectionIndex < sections.length - 1) {
-      // Move to next section
-      setActiveSectionIndex(prev => prev + 1);
-    } else {
-      // Final submit
-      setSubmitted(true);
-      console.log("Final Form Data:", values);
+  if (activeSectionIndex < sections.length - 1) {
+    setActiveSectionIndex(prev => prev + 1);
+  } else {
+    setSubmitted(true);
 
-      setTimeout(() => {
-        setSubmitted(false);
-        setActiveSectionIndex(0); // reset if needed
-      }, 3000);
+    const finalData = {
+      ...values,
+      _metadata: { submittedAt: new Date().toISOString() }
+    };
+
+    console.log("Final Form Data:", finalData);
+
+    const submitBtn = document.getElementById('submit-btn');
+
+    if (submitBtn) {
+      submitBtn.textContent = '✓ Submitted';
     }
-  };
+
+    
+
+    setTimeout(() => {
+      setSubmitted(false);
+      setActiveSectionIndex(0);
+    }, 2000);
+  }
+};
 
   if (fields.length === 0) {
     return (
@@ -130,6 +142,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
 
               {/* Submit / Next */}
               <button
+                id="submit-btn"
                 onClick={handleSubmit}
                 className="px-6 py-2.5 bg-[#ffbe0b] rounded-lg font-bold"
               >
