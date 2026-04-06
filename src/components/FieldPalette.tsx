@@ -64,6 +64,6 @@ export const FieldPalette: React.FC<FieldPaletteProps> = ({ onAddField }) => {
           </div>
         ))}
       </div>
-    </motion.aside>
+    </aside>
   );
 };

@@ -114,7 +114,6 @@ const viewWidths: Record<ViewMode, string> = {
 };
 
 export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
-  const [viewMode, setViewMode] = useState<ViewMode>('laptop');
   const fields = schema.form.fields || [];
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [submitted, setSubmitted] = useState(false);
