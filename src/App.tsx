@@ -14,8 +14,8 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('builder');
   const [rightPanel, setRightPanel] = useState<'field' | 'settings'>('settings');
 
-  const fields = schema.form.fields || [];
-  const selectedField = fields.find(f => f.id === selectedFieldId) || null;
+  const sections = schema.form.sections || [];
+  const selectedField = sections.find(f => f.id === selectedFieldId) || null;
 
   const updateFields = useCallback((next: FormField[]) => {
     setSchema(s => ({ ...s, form: { ...s.form, fields: next } }));

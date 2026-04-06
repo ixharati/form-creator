@@ -1,4 +1,4 @@
-import { FormField, FieldType, FormSchema } from '../types';
+import { FormField, FieldType, FormSchema, FormSection } from '../types';
 
 export const INITIAL_SCHEMA: FormSchema = {
   version: '1',
@@ -28,6 +28,14 @@ export const INITIAL_SCHEMA: FormSchema = {
   ],
   defaultLanguage: 'en-US',
 };
+
+export const createDefaultSection = (): FormSection => ({
+  id: generateSectionId(),
+  title: 'New Section',
+  description: '',
+  fields: [],
+  collapsible: false,
+});
 
 export const FIELD_ICONS: Record<FieldType, string> = {
   text: 'T',
