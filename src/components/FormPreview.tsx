@@ -33,7 +33,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
 
   if (fields.length === 0) {
     return (
-      <div className="flex-1 z-10 flex flex-col items-center justify-center gap-3 text-text-muted p-10">
+      <div className="flex-1 z-10 flex flex-col items-center justify-center gap-3 text-[#8a8a8a] p-10">
         <div className="text-[48px]">◻</div>
         <p className="font-display text-[16px] font-semibold">No fields yet</p>
         <p className="text-[13px]">Add fields to see your preview here.</p>
@@ -42,17 +42,17 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-bg-base overflow-hidden">
+    <div className="flex-1 flex flex-col h-full bg-white overflow-hidden">
       {/* Device Toggle Header */}
-      <div className="h-14 border-b border-border-default flex items-center justify-center gap-2 bg-bg-surface">
+      <div className="h-14 border-b border-[#e0e0e0] flex items-center justify-center gap-2 bg-white">
         {(['laptop', 'tablet', 'mobile'] as ViewMode[]).map((mode) => (
           <button
             key={mode}
             onClick={() => setViewMode(mode)}
             className={`px-3 py-1.5 rounded-md text-[12px] font-medium transition-all ${
               viewMode === mode
-                ? 'bg-accent text-white shadow-md'
-                : 'text-text-muted hover:bg-bg-overlay hover:text-text-primary'
+                ? 'bg-[#ffbe0b] text-[#2d2d2d] shadow-md'
+                : 'text-[#8a8a8a] hover:bg-[#f9f9f9] hover:text-[#2d2d2d]'
             }`}
           >
             {mode.charAt(0).toUpperCase() + mode.slice(1)}
@@ -61,22 +61,22 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
       </div>
 
       {/* Preview Area */}
-      <div className="flex-1 overflow-y-auto p-8 flex justify-center bg-bg-surface">
+      <div className="flex-1 overflow-y-auto p-8 flex justify-center bg-white">
         <motion.div 
           animate={{ width: viewWidths[viewMode] }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="h-fit bg-bg-elevated border border-border-default shadow-xl rounded-xl overflow-hidden max-w-[800px]"
+          className="h-fit bg-white border border-[#e0e0e0] shadow-xl rounded-xl overflow-hidden max-w-[800px]"
         >
           {/* Form header */}
           <div
-            className="px-8 pt-7 pb-5 border-b border-border-default"
-            style={{ background: '#064028' }}
+            className="px-8 pt-7 pb-5 border-b border-[#e0e0e0]"
+            style={{ background: '#ffffff', borderBottom: '2px solid #ffbe0b' }}
           >
-            <h2 className="font-display text-[22px] font-bold text-text-primary">
+            <h2 className="font-display text-[22px] font-bold text-[#2d2d2d]">
               {schema.form.title || "Untitled Form"}
             </h2>
             {schema.form.description && (
-              <p className="text-[13px] text-text-secondary mt-1 text-white">{schema.form.description}</p>
+              <p className="text-[13px] text-[#4a4a4a] mt-1">{schema.form.description}</p>
             )}
           </div>
           
@@ -100,16 +100,17 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
           </div>
 
           {/* Footer */}
-          <div className="px-8 pb-6 pt-4 flex gap-[10px] justify-end border-t border-border-default">
+          <div className="px-8 pb-6 pt-4 flex gap-[10px] justify-end border-t border-[#e0e0e0]">
             <button 
-              className="px-5 py-[9px] bg-transparent border border-border-default rounded-[10px] text-text-secondary font-display font-semibold text-[13px] cursor-pointer">
+              className="px-5 py-[9px] bg-white border border-[#e0e0e0] rounded-[10px] text-[#2d2d2d] font-display font-semibold text-[13px] cursor-pointer hover:bg-[#f9f9f9]">
                 {schema.form.cancelLabel || 'Cancel'}
           </button>
             <button
               onClick={handleSubmit}
-              className="px-6 py-2.5 rounded-lg text-white font-bold text-[13px] transition-all"
+              className="px-6 py-2.5 rounded-lg text-[#2d2d2d] font-bold text-[13px] transition-all"
               style={{
-                background: submitted ? '#0a5c3a' : '#064028'
+                background: submitted ? '#ffa500' : '#ffbe0b',
+                boxShadow: '0 2px 8px rgba(255, 190, 11, 0.3)'
               }}
             >
               {submitted ? '✓ Submitted!' : (schema.form.submitLabel || 'Submit')}
@@ -122,8 +123,8 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
 };
 
 
-const inputClass ="w-full px-3 py-[9px] bg-bg-base border border-border-default rounded-[6px] text-text-primary text-[13px] outline-none font-body transition-colors duration-150 focus:border-border-focus focus:shadow-[0_0_0_3px_rgba(6,64,40,0.15)]";
-const labelClass = "block text-[12px] font-semibold text-text-secondary mb-[6px] tracking-[0.02em]";
+const inputClass ="w-full px-3 py-[9px] bg-white border border-[#e0e0e0] rounded-[6px] text-[#2d2d2d] text-[13px] outline-none font-body transition-colors duration-150 focus:border-[#ffbe0b] focus:shadow-[0_0_0_3px_rgba(255,190,11,0.15)]";
+const labelClass = "block text-[12px] font-semibold text-[#2d2d2d] mb-[6px] tracking-[0.02em]";
 
 const PreviewField: React.FC<{
   field: FormField;
@@ -153,7 +154,7 @@ const PreviewField: React.FC<{
         case 'button':
           return(
             <button onClick={()=>{onChange(true)}} 
-            className='px-4 py-2.5 bg-[var(--accent)] border-0 rounded-md text-white font-semibold text-[13px] transition shadow-[var(--shadow--accent)]'>
+            className='px-4 py-2.5 bg-[#ffbe0b] border-0 rounded-md text-[#2d2d2d] font-semibold text-[13px] transition shadow-md hover:opacity-90'>
               {field.placeholder||"button"}
             </button>
           )
@@ -192,64 +193,64 @@ const PreviewField: React.FC<{
                     control: (base) => ({
                       ...base,
                       minHeight: 50,
-                      backgroundColor: 'var(--bg-base)',
-                      borderColor: 'var(--border-default)',
-                      color: '#064028',
+                      backgroundColor: '#ffffff',
+                      borderColor: '#e0e0e0',
+                      color: '#2d2d2d',
                     }),
 
                     menu: (base) => ({
                       ...base,
                       backgroundColor: '#ffffff',
-                      color: '#064028',
+                      color: '#2d2d2d',
                     }),
 
                     option: (base, state) => ({
                       ...base,
                       backgroundColor: state.isSelected
-                        ? '#064028'
+                        ? '#ffbe0b'
                         : state.isFocused
-                        ? '#eef5f0'
+                        ? '#f9f9f9'
                         : '#ffffff',
-                      color: state.isSelected ? '#ffffff' : '#064028',
+                      color: state.isSelected ? '#2d2d2d' : '#2d2d2d',
                     }),
 
                     multiValue: (base) => ({
                       ...base,
-                      backgroundColor: '#064028',
+                      backgroundColor: '#fff8e1',
                     }),
 
                     multiValueLabel: (base) => ({
                       ...base,
-                      color: '#ffffff',
+                      color: '#ffbe0b',
                     }),
 
                     multiValueRemove: (base) => ({
                       ...base,
-                      color: '#ffffff',
+                      color: '#ffbe0b',
                       ':hover': {
-                        backgroundColor: '#0a5c3a',
+                        backgroundColor: '#ffa500',
                         color: '#ffffff',
                       },
                     }),
 
                     singleValue: (base) => ({
                       ...base,
-                      color: '#064028',
+                      color: '#2d2d2d',
                     }),
 
                     input: (base) => ({
                       ...base,
-                      color: '#064028',
+                      color: '#2d2d2d',
                     }),
 
                     placeholder: (base) => ({
                       ...base,
-                      color: '#6b8f7a',
+                      color: '#8a8a8a',
                     }),
 
                     dropdownIndicator: (base) => ({
                       ...base,
-                      color: '#064028',
+                      color: '#2d2d2d',
                     }),
 
                     indicatorSeparator: () => ({
@@ -276,9 +277,9 @@ const PreviewField: React.FC<{
                       const cur = (value as string[]) || [];
                       onChange(e.target.checked ? [...cur, opt.value] : cur.filter(v => v !== opt.value));
                     }}
-                    className="w-[15px] h-[15px] accent-accent"
+                    className="w-[15px] h-[15px] accent-[#ffbe0b]"
                   />
-                  <span className="text-[13px] text-text-primary">{opt.label}</span>
+                  <span className="text-[13px] text-white">{opt.label}</span>
                 </label>
               ))}
             </div>
@@ -290,9 +291,9 @@ const PreviewField: React.FC<{
               type="checkbox"
               checked={!!(value)}
               onChange={e => onChange(e.target.checked)}
-              className="w-[15px] h-[15px] accent-accent"
+              className="w-[15px] h-[15px] accent-[#ffbe0b]"
             />
-            <span className="text-[13px] text-text-secondary">
+            <span className="text-[13px] text-white">
               {field.placeholder || 'Check this option'}
             </span>
           </label>
@@ -309,9 +310,9 @@ const PreviewField: React.FC<{
                   value={opt.value}
                   checked={value === opt.value}
                   onChange={() => onChange(opt.value)}
-                  className="w-[15px] h-[15px] accent-accent"
+                  className="w-[15px] h-[15px] accent-[#ffbe0b]"
                 />
-                <span className="text-[13px] text-text-primary">{opt.label}</span>
+                <span className="text-[13px] text-white">{opt.label}</span>
               </label>
             ))}
           </div>
@@ -326,8 +327,8 @@ const PreviewField: React.FC<{
             <div
               className="w-11 h-6 rounded-full relative transition-all duration-200"
               style={{
-                background: value ? '#064028' : '#d6e5dd',
-                border: `1px solid ${value ? '#064028' : '#d6e5dd'}`
+                background: value ? '#ffbe0b' : '#e0e0e0',
+                border: `1px solid ${value ? '#ffbe0b' : '#e0e0e0'}`
               }}
             >
               <div
@@ -335,7 +336,7 @@ const PreviewField: React.FC<{
                 style={{ left: value ? 22 : 2, boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}
               />
             </div>
-            <span className={`text-[13px] ${value ? 'text-text-primary' : 'text-text-muted'}`}>
+            <span className={`text-[13px] ${value ? 'text-[#ffbe0b]' : 'text-[#a5a7c4]'}`}>
               {value ? 'Enabled' : 'Disabled'}
             </span>
           </div>
@@ -351,14 +352,14 @@ const PreviewField: React.FC<{
               value={(value as number) ?? (field.defaultValue as number) ?? 50}
               onChange={e => onChange(Number(e.target.value))}
               disabled={field.disabled}
-              className="w-full accent-accent"
+              className="w-full accent-[#ffbe0b]"
             />
             <div className="flex justify-between mt-1">
-              <span className="text-[11px] text-text-muted">{field.validation?.min ?? 0}</span>
-              <span className="text-[12px] font-semibold text-accent">
+              <span className="text-[11px] text-[#8a8a8a]">{field.validation?.min ?? 0}</span>
+              <span className="text-[12px] font-semibold text-[#ffbe0b]">
                 {(value as number) ?? (field.defaultValue as number) ?? 50}
               </span>
-              <span className="text-[11px] text-text-muted">{field.validation?.max ?? 100}</span>
+              <span className="text-[11px] text-[#8a8a8a]">{field.validation?.max ?? 100}</span>
             </div>
           </div>
         );
@@ -422,7 +423,7 @@ const PreviewField: React.FC<{
 
             <div className="text-[24px] mb-[6px]">📎</div>
 
-            <p className="text-[12px] text-text-muted">
+            <p className="text-[12px] text-[#d4d4e0]">
               {value instanceof File
                 ? value.name
                 : 'Click to upload or drag and drop'}
@@ -467,7 +468,7 @@ const PreviewField: React.FC<{
             )}
             {renderInput()}
             {field.helpText && (
-              <p className="text-[11px] text-text-muted mt-[5px]">{field.helpText}</p>
+              <p className="text-[11px] text-[#8a8a8a] mt-[5px]">{field.helpText}</p>
             )}
           </div>
         );

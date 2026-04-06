@@ -36,12 +36,12 @@ export const JSONView: React.FC<JSONViewProps> = ({ schema, onImport }) => {
   };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden p-5 gap-3">
+    <div className="flex-1 flex flex-col overflow-hidden p-5 gap-3 bg-white text-[#2d2d2d]">
       {/* Toolbar */}
       <div className="flex items-center justify-between flex-shrink-0">
         <div>
-          <p className="font-display text-[14px] font-bold text-text-primary">JSON Schema</p>
-          <p className="text-[12px] text-text-muted">
+          <p className="font-display text-[14px] font-bold text-[#2d2d2d]">JSON Schema</p>
+          <p className="text-[12px] text-[#8a8a8a]">
             {JSON.stringify(schema).length} chars · {(schema.form.fields || []).length} fields
           </p>
         </div>
@@ -68,8 +68,8 @@ export const JSONView: React.FC<JSONViewProps> = ({ schema, onImport }) => {
       <div
         className="flex-1 overflow-hidden rounded-[16px] transition-all duration-200"
         style={{
-          border: `1px solid ${editing ? '#6c63ff' : '#2a2a38'}`,
-          boxShadow: editing ? '0 0 0 3px rgba(108,99,255,0.1)' : 'none',
+          border: `1px solid ${editing ? '#ffbe0b' : '#e0e0e0'}`,
+          boxShadow: editing ? '0 0 0 3px rgba(255,190,11,0.1)' : 'none',
         }}
       >
         {editing ? (
@@ -77,12 +77,12 @@ export const JSONView: React.FC<JSONViewProps> = ({ schema, onImport }) => {
             value={raw}
             onChange={e => { setRaw(e.target.value); setError(''); }}
             spellCheck={false}
-            className="w-full h-full bg-bg-surface text-text-primary border-none outline-none p-4 font-mono text-[12px] leading-[1.7] resize-none"
+            className="w-full h-full bg-white text-[#2d2d2d] border-none outline-none p-4 font-mono text-[12px] leading-[1.7] resize-none"
             style={{ fontFamily: '"Fira Code", "Cascadia Code", "Courier New", monospace', tabSize: 2 }}
           />
         ) : (
           <pre
-            className="w-full h-full overflow-y-auto bg-bg-surface p-4 text-[12px] leading-[1.7] whitespace-pre m-0"
+            className="w-full h-full overflow-y-auto bg-white p-4 text-[12px] leading-[1.7] whitespace-pre m-0 text-[#2d2d2d]"
             style={{ fontFamily: '"Fira Code", "Cascadia Code", "Courier New", monospace' }}
           >
             <SyntaxHighlight code={raw} />
@@ -110,13 +110,13 @@ interface Token { type: TokenType; value: string; }
 
 function tokenColor(type: TokenType): string {
   switch (type) {
-    case 'key': return '#7ec8e3';
-    case 'string': return '#a8ff78';
-    case 'number': return '#ffb347';
-    case 'boolean': return '#ff6b9d';
-    case 'null': return '#9090aa';
-    case 'punct': return '#5a5a72';
-    default: return '#f0f0fa';
+    case 'key': return '#0066cc';
+    case 'string': return '#22aa22';
+    case 'number': return '#ff6600';
+    case 'boolean': return '#d63384';
+    case 'null': return '#666666';
+    case 'punct': return '#999999';
+    default: return '#2d2d2d';
   }
 }
 
@@ -159,9 +159,9 @@ const Btn: React.FC<{
   variant?: 'default' | 'accent' | 'success';
 }> = ({ children, onClick, variant = 'default' }) => {
   const styles = {
-    accent: { bg: 'rgba(108,99,255,0.1)', color: '#6c63ff', border: '#6c63ff' },
-    success: { bg: 'rgba(0,212,170,0.1)', color: '#00d4aa', border: '#00d4aa' },
-    default: { bg: '#18181f', color: '#9090aa', border: '#2a2a38' },
+    accent: { bg: '#fff8e1', color: '#ffbe0b', border: '#ffbe0b' },
+    success: { bg: 'rgba(22,163,74,0.1)', color: '#16a34a', border: '#16a34a' },
+    default: { bg: '#f9f9f9', color: '#2d2d2d', border: '#e0e0e0' },
   }[variant];
 
   return (

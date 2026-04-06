@@ -66,33 +66,33 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg--bg-base">
+    <div className="h-screen flex flex-col overflow-hidden bg-white">
       {/* ── Top Bar ── */}
-      <header className="h-[52px] min-h-[52px] flex items-center justify-between px-5 bg-bg-primary border-b border-border-default z-10 flex-shrink-0">
+      <header className="h-[52px] min-h-[52px] flex items-center justify-between px-5 bg-white border-b border-[#e0e0e0] z-10 flex-shrink-0">
         {/* Logo */}
         <div className="flex items-center gap-[10px]">
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center text-[13px] font-extrabold text-white flex-shrink-0 font-display"
             style={{
-              background: 'linear-gradient(135deg, #6c63ff, #ff6b9d)',
-              boxShadow: '0 2px 10px rgba(108,99,255,0.4)',
+              background: '#ffbe0b',
+              boxShadow: '0 2px 10px rgba(255, 190, 11, 0.3)',
             }}
           >F</div>
           <span
-            className="font-display font-extrabold text-base tracking-tight"
+            className="font-display font-extrabold text-base tracking-tight text-[#2d2d2d]"
           >FormBuilder</span>
         </div>
 
         {/* Tab switcher */}
-        <div className="flex bg-bg-primary border border-border-default rounded-[10px] p-[3px] gap-[2px]">
+        <div className="flex bg-white border border-[#e0e0e0] rounded-[10px] p-[3px] gap-[2px]">
           {(['builder', 'preview', 'json'] as ActiveTab[]).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-[5px] bg--bg-primary rounded-[6px] font-display font-semibold text-[12px] cursor-pointer transition-all duration-200 tracking-wider capitalize border ${
+              className={`px-4 py-[5px] rounded-[6px] font-display font-semibold text-[12px] cursor-pointer transition-all duration-200 tracking-wider capitalize border ${
                 activeTab === tab
-                  ? 'bg-bg-overlay border-border-light-custom text-text-primary'
-                  : 'bg-transparent border-transparent text-text-muted'
+                  ? 'bg-[#fff8e1] border-[#ffbe0b] text-[#ffbe0b]'
+                  : 'bg-transparent border-transparent text-[#8a8a8a]'
               }`}
             >
               {tab === 'builder' ? '⚙ Builder' : tab === 'preview' ? '◻ Preview' : '{ } JSON'}
@@ -102,7 +102,7 @@ export default function App() {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <span className="text-[11px] text-text-muted bg-[#ffbe0b] px-[10px] py-[3px] rounded-full border border-border-default">
+          <span className="text-[11px] text-[#2d2d2d] bg-[#fff8e1] px-[10px] py-[3px] rounded-full border border-[#ffbe0b]">
             {fields.length} field{fields.length !== 1 ? 's' : ''}
           </span>
           {activeTab === 'builder' && fields.length > 0 && (
@@ -134,17 +134,17 @@ export default function App() {
             />
 
             {/* Right: Editor Panel */}
-            <aside className="w-[260px] min-w-[260px] bg-bg-surface border-l border-border-default flex flex-col overflow-hidden">
+            <aside className="w-[260px] min-w-[260px] bg-white border-l border-[#e0e0e0] flex flex-col overflow-hidden">
               {/* Panel tab switcher */}
-              <div className="flex border-b border-border-default flex-shrink-0">
+              <div className="flex border-b border-[#e0e0e0] flex-shrink-0">
                 {(['settings', 'field'] as const).map(panel => (
                   <button
                     key={panel}
                     onClick={() => setRightPanel(panel)}
                     className={`flex-1 py-[10px] px-2 font-display font-semibold text-[11px] cursor-pointer transition-all duration-200 tracking-[0.06em] uppercase border-b-2 border-t-0 border-l-0 border-r-0 ${
                       rightPanel === panel
-                        ? 'bg-bg-elevated border-accent text-text-primary'
-                        : 'bg-transparent border-transparent text-text-muted'
+                        ? 'bg-white border-[#ffbe0b] text-[#ffbe0b]'
+                        : 'bg-transparent border-transparent text-[#8a8a8a]'
                     }`}
                   >
                     {panel === 'settings' ? '⚙ Form' : '✎ Field'}
@@ -189,12 +189,12 @@ const HeaderBtn: React.FC<{
 }> = ({ children, onClick, accent, danger }) => (
   <button
     onClick={onClick}
-    className={`px-[14px] py-[6px] rounded-[6px] text-black font-bold text-[12px] cursor-pointer transition-all duration-200 border ${
+    className={`px-[14px] py-[6px] rounded-[6px] font-bold text-[12px] cursor-pointer transition-all duration-200 border ${
       accent
-        ? 'bg-[#ffbe0b] border-accent text-white shadow-primary hover:opacity-[0.88]'
+        ? 'bg-[#ffbe0b] border-[#ffbe0b] text-[#2d2d2d] shadow-md hover:opacity-[0.88]'
         : danger
-        ? 'bg-transparent border-border-default text-danger hover:bg-[rgba(255,77,109,0.1)] hover:border-danger'
-        : 'bg-bg-elevated border-border-default text-text-secondary'
+        ? 'bg-transparent border-[#e0e0e0] text-[#dc2626] hover:bg-[rgba(220,38,38,0.1)] hover:border-[#dc2626]'
+        : 'bg-white border-[#e0e0e0] text-[#2d2d2d]'
     }`}
   >
     {children}
@@ -203,14 +203,14 @@ const HeaderBtn: React.FC<{
 
 const NoFieldSelected: React.FC<{ onShowSettings: () => void }> = ({ onShowSettings }) => (
   <div className="p-6 flex flex-col items-center justify-center h-full gap-3 text-center">
-    <div className="w-11 h-11 rounded-[10px] bg-bg-overlay border border-border-default flex items-center justify-center text-[20px] text-text-muted">☐</div>
-    <p className="font-display text-[13px] font-bold text-text-secondary">No field selected</p>
-    <p className="text-[12px] text-text-muted max-w-[180px]">
+    <div className="w-11 h-11 rounded-[10px] bg-[#f9f9f9] border border-[#e0e0e0] flex items-center justify-center text-[20px] text-[#8a8a8a]">☐</div>
+    <p className="font-display text-[13px] font-bold text-[#4a4a4a]">No field selected</p>
+    <p className="text-[12px] text-[#8a8a8a] max-w-[180px]">
       Click a field on the canvas to edit its properties.
     </p>
     <button
       onClick={onShowSettings}
-      className="mt-1 px-4 py-[7px] bg-[rgba(108,99,255,0.1)] border border-border-focus rounded-[6px] text-accent text-[12px] cursor-pointer font-display font-semibold"
+      className="mt-1 px-4 py-[7px] bg-[#fff8e1] border border-[#ffbe0b] rounded-[6px] text-[#ffbe0b] text-[12px] cursor-pointer font-display font-semibold hover:bg-[#fef5cc]"
     >
       ⚙ Edit Form Settings
     </button>
