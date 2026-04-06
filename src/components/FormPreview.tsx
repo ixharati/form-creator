@@ -1,101 +1,3 @@
-// import React, { useState } from 'react';
-// import { FormField, FormSchema } from '../types';
-// import Select from 'react-select/base';
-
-// interface FormPreviewProps {
-//   schema: FormSchema;
-// }
-
-// export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
-//   const fields = schema.form.fields || [];
-//   const [values, setValues] = useState<Record<string, unknown>>({});
-//   const [submitted, setSubmitted] = useState(false);
-
-//   const updateValue = (id: string, val: unknown) => {
-//     setValues(v => ({ ...v, [id]: val }));
-//   };
-
-//   // const handleCancel = () => {
-//   //   setValues({});
-//   //   setSubmitted(false);
-//   // };
-
-//   const handleSubmit = () => {
-//     setSubmitted(true);
-//     setTimeout(() => setSubmitted(false), 3000);
-//   };
-
-//   if (fields.length === 0) {
-//     return (
-//       <div className="flex-1 flex flex-col items-center justify-center gap-3 text-text-muted p-10">
-//         <div className="text-[48px]">◻</div>
-//         <p className="font-display text-[16px] font-semibold">No fields yet</p>
-//         <p className="text-[13px] text-center max-w-[280px]">
-//           Add fields from the left panel to see your form preview here.
-//         </p>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="flex-1 overflow-y-auto px-6 py-8 flex h-full justify-center">
-//       <div className="w-full max-w-[600px] bg-bg-elevated border border-border-default overflow-auto shadow-lg">
-//         {/* Form header */}
-//         <div
-//           className="px-8 pt-7 pb-5 border-b border-border-default"
-//           style={{ background: 'linear-gradient(135deg, #1e1e28 0%, #18181f 100%)' }}
-//         >
-//           <h2 className="font-display text-[22px] font-bold text-text-primary" style={{ marginBottom: schema.form.description ? 6 : 0 }}>
-//             {schema.form.title || schema.form.key}
-//           </h2>
-//           {schema.form.description && (
-//             <p className="text-[13px] text-text-secondary">{schema.form.description}</p>
-//           )}
-//         </div>
-
-//         {/* Fields */}
-//         <div className="px-8 py-6 flex flex-wrap gap-4">
-//           {fields.map(field => (
-//             <div
-//               key={field.id}
-//               style={{
-//                 width: field.width === 'half' ? 'calc(50% - 8px)' :
-//                        field.width === 'third' ? 'calc(33.3% - 11px)' : '100%',
-//               }}
-//             >
-//               <PreviewField
-//                 field={field}
-//                 value={values[field.id]}
-//                 onChange={v => updateValue(field.id, v)}
-//               />
-//             </div>
-//           ))}
-//         </div>
-
-//         {/* Footer */}
-//         <div className="px-8 pb-6 pt-4 flex gap-[10px] justify-end border-t border-border-default">
-//           {/* <button onClick={handleCancel}
-//           className="px-5 py-[9px] bg-transparent border border-border-default rounded-[10px] text-text-secondary font-display font-semibold text-[13px] cursor-pointer">
-//             {schema.form.cancelLabel || 'Cancel'}
-//           </button> */}
-//           <button
-//             onClick={handleSubmit}
-//             className="px-5 py-[9px] border-none rounded-[10px] text-white font-display font-bold text-[13px] cursor-pointer transition-all duration-200"
-//             style={{
-//               background: submitted ? '#00d4aa' : '#6c63ff',
-//               boxShadow: submitted ? '0 4px 16px rgba(0,212,170,0.4)' : '0 4px 20px rgba(108,99,255,0.25)',
-//             }}
-//           >
-//             {submitted ? '✓ Submitted!' : (schema.form.submitLabel || 'Submit')}
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-
-
 import React, { useState } from 'react';
 import { FormField, FormSchema } from '../types';
 import { motion } from 'framer-motion';
@@ -130,7 +32,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
 
   if (fields.length === 0) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-3 text-text-muted p-10">
+      <div className="flex-1 z-10 flex flex-col items-center justify-center gap-3 text-text-muted p-10">
         <div className="text-[48px]">◻</div>
         <p className="font-display text-[16px] font-semibold">No fields yet</p>
         <p className="text-[13px]">Add fields to see your preview here.</p>
@@ -147,9 +49,9 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
             key={mode}
             onClick={() => setViewMode(mode)}
             className={`px-3 py-1.5 rounded-md text-[12px] font-medium transition-all ${
-              viewMode === mode 
-                ? 'bg-accent text-white shadow-md' 
-                : 'text-text-muted hover:bg-bg-overlay'
+              viewMode === mode
+                ? 'bg-accent text-white shadow-md'
+                : 'text-text-muted hover:bg-bg-overlay hover:text-text-primary'
             }`}
           >
             {mode.charAt(0).toUpperCase() + mode.slice(1)}
@@ -167,16 +69,16 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
           {/* Form header */}
           <div
             className="px-8 pt-7 pb-5 border-b border-border-default"
-            style={{ background: 'linear-gradient(135deg, #1e1e28 0%, #18181f 100%)' }}
+            style={{ background: '#064028' }}
           >
             <h2 className="font-display text-[22px] font-bold text-text-primary">
               {schema.form.title || "Untitled Form"}
             </h2>
             {schema.form.description && (
-              <p className="text-[13px] text-text-secondary mt-1">{schema.form.description}</p>
+              <p className="text-[13px] text-text-secondary mt-1 text-white">{schema.form.description}</p>
             )}
           </div>
-
+          
           {/* Fields - Responsive wrapping */}
           <div className="px-8 py-6 flex flex-wrap gap-4">
             {fields.map(field => (
@@ -184,10 +86,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
                 key={field.id}
                 className="transition-all duration-300"
                 style={{
-                  // Force full width on mobile regardless of setting
-                  width: viewMode === 'mobile' ? '100%' : 
-                         field.width === 'half' ? 'calc(50% - 8px)' :
-                         field.width === 'third' ? 'calc(33.3% - 11px)' : '100%',
+                  width: (field.width) ? field.width / 12 * (field.width ||12 ): 700 // Calculate width based on field.width (default full width)
                 }}
               >
                 <PreviewField
@@ -209,7 +108,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
               onClick={handleSubmit}
               className="px-6 py-2.5 rounded-lg text-white font-bold text-[13px] transition-all"
               style={{
-                background: submitted ? '#00d4aa' : '#6c63ff',
+                background: submitted ? '#0a5c3a' : '#064028'
               }}
             >
               {submitted ? '✓ Submitted!' : (schema.form.submitLabel || 'Submit')}
@@ -222,7 +121,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
 };
 
 
-const inputClass = "w-full px-3 py-[9px] bg-bg-base border border-border-default rounded-[6px] text-text-primary text-[13px] outline-none font-body transition-colors duration-150 focus:border-border-focus focus:shadow-[0_0_0_3px_rgba(108,99,255,0.1)]";
+const inputClass ="w-full px-3 py-[9px] bg-bg-base border border-border-default rounded-[6px] text-text-primary text-[13px] outline-none font-body transition-colors duration-150 focus:border-border-focus focus:shadow-[0_0_0_3px_rgba(6,64,40,0.15)]";
 const labelClass = "block text-[12px] font-semibold text-text-secondary mb-[6px] tracking-[0.02em]";
 
 const PreviewField: React.FC<{
@@ -242,77 +141,124 @@ const PreviewField: React.FC<{
             disabled={field.disabled}
             readOnly={field.readOnly}
             rows={3}
-            className={`${inputClass} resize-y leading-[1.5]`}
-          />
-        );
-
-      case 'select':
-        return (
-          <Select
-            options={field.options?.map(o => ({
-              label: o.label,
-              value: o.value
-            }))}
-            styles={{
-              control: (base) => ({
-                ...base,
-                backgroundColor: '#000',
-                borderColor: '#333',
-                color: '#fff',
-              }),
-              menu: (base) => ({
-                ...base,
-                backgroundColor: '#000',
-              }),
-              option: (base, state) => ({
-                ...base,
-                backgroundColor: state.isFocused ? '#222' : '#000',
-                color: '#fff',
-                padding: 12,
-                height: 50,
-              }),
-              singleValue: (base) => ({
-                ...base,
-                color: '#fff',
-              }),
-              input: (base) => ({
-                ...base,
-                color: '#fff',
-              }),
-              placeholder: (base) => ({
-                ...base,
-                color: '#888',
-              }),
-              dropdownIndicator: (base) => ({
-                ...base,
-                color: '#fff',
-              }),
-              indicatorSeparator: () => ({
-                display: 'none',
-              }),
+            className={`${inputClass} min-h-[80px]`}
+            style={{
+              width: field.style?.width || '100%',
             }}
           />
         );
 
+      
         case 'button':
           return(
-            <button onClick={()=>{onChange(true)}} className='px-4 py-2.5 bg-[var(--accent)] border-0 rounded-md text-white font-semibold text-[13px] transition shadow-[var(--shadow--accent)]'>
+            <button onClick={()=>{onChange(true)}} 
+            className='px-4 py-2.5 bg-[var(--accent)] border-0 rounded-md text-white font-semibold text-[13px] transition shadow-[var(--shadow--accent)]'>
               {field.placeholder||"button"}
             </button>
           )
 
-      case 'multiselect':
-        return (
-          <select
-            multiple
-            value={(value as string[]) || []}
-            onChange={e => onChange(Array.from(e.target.selectedOptions).map(o => o.value))}
-            disabled={field.disabled}
-            className={`${inputClass} h-[90px] cursor-pointer`}
-          >
-            {field.options?.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-          </select>
-        );
+          case 'select':
+            const isMulti = field.multiple;
+            const options=field.options?.map(o=>({
+              label:o.label,
+              value:o.value
+            }))||[]
+            const selectedValue = isMulti
+              ? options.filter(o => (value as string[] || []).includes(o.value))
+              : options.find(o => o.value === value)||null;
+
+              return (
+                <div>
+                  <Select 
+                  isMulti={isMulti}
+                  options = {options}
+                  value={selectedValue}
+                  onChange={(selected)=>{
+                    if(isMulti){
+                      onChange((selected||[]).map((s:any)=>s.value))
+                    }else{
+                      onChange((selected as any)?.value||"");
+                    }
+                  }}
+                  menuPortalTarget={document.body}
+                  menuPosition='fixed'
+
+                  styles={{
+                    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+
+                    control: (base) => ({
+                      ...base,
+                      minHeight: 50,
+                      backgroundColor: 'var(--bg-base)',
+                      borderColor: 'var(--border-default)',
+                      color: '#064028',
+                    }),
+
+                    menu: (base) => ({
+                      ...base,
+                      backgroundColor: '#ffffff',
+                      color: '#064028',
+                    }),
+
+                    option: (base, state) => ({
+                      ...base,
+                      backgroundColor: state.isSelected
+                        ? '#064028'
+                        : state.isFocused
+                        ? '#eef5f0'
+                        : '#ffffff',
+                      color: state.isSelected ? '#ffffff' : '#064028',
+                    }),
+
+                    multiValue: (base) => ({
+                      ...base,
+                      backgroundColor: '#064028',
+                    }),
+
+                    multiValueLabel: (base) => ({
+                      ...base,
+                      color: '#ffffff',
+                    }),
+
+                    multiValueRemove: (base) => ({
+                      ...base,
+                      color: '#ffffff',
+                      ':hover': {
+                        backgroundColor: '#0a5c3a',
+                        color: '#ffffff',
+                      },
+                    }),
+
+                    singleValue: (base) => ({
+                      ...base,
+                      color: '#064028',
+                    }),
+
+                    input: (base) => ({
+                      ...base,
+                      color: '#064028',
+                    }),
+
+                    placeholder: (base) => ({
+                      ...base,
+                      color: '#6b8f7a',
+                    }),
+
+                    dropdownIndicator: (base) => ({
+                      ...base,
+                      color: '#064028',
+                    }),
+
+                    indicatorSeparator: () => ({
+                      display: 'none',
+                    }),
+                  }}
+                  >
+
+
+                  </Select>
+                </div>
+              )
 
       case 'checkbox':
         if (field.options && field.options.length > 1) {
@@ -377,8 +323,8 @@ const PreviewField: React.FC<{
             <div
               className="w-11 h-6 rounded-full relative transition-all duration-200"
               style={{
-                background: value ? '#6c63ff' : '#24242f',
-                border: `1px solid ${value ? '#6c63ff' : '#2a2a38'}`,
+                background: value ? '#064028' : '#d6e5dd',
+                border: `1px solid ${value ? '#064028' : '#d6e5dd'}`
               }}
             >
               <div
@@ -414,13 +360,70 @@ const PreviewField: React.FC<{
           </div>
         );
 
+        case 'datetime': {
+          const enableDate = field.enableDate ?? true;
+          const enableTime = field.enableTime ?? false;
+
+          let inputType = 'date';
+
+          if (enableDate && enableTime) {
+            inputType = 'datetime-local';
+          } else if (!enableDate && enableTime) {
+            inputType = 'time';
+          } else if (enableDate && !enableTime) {
+            inputType = 'date';
+          }
+
+          return (
+            <input
+              type={inputType}
+              value={(value as string) || ''}
+              onChange={e => onChange(e.target.value)}
+              disabled={field.disabled}
+              readOnly={field.readOnly}
+              className={inputClass}
+            />
+          );
+        }
+
       case 'file':
+        const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const files = Array.from(e.dataTransfer.files || []);
+        onChange(field.multiple ? files : files[0]);
+      };
+
+      const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault(); // THIS IS REQUIRED FOR NOT REFRESHING THE PAGE AUTOMATICALLY
+      };
         return (
           <div
             className="border-2 border-dashed border-border-default rounded-[10px] p-5 text-center cursor-pointer transition-all duration-200 hover:border-accent"
+            onClick={() => document.getElementById(field.id)?.click()}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragEnter={handleDragOver}
           >
+            <input
+              id={field.id}
+              type="file"
+              hidden
+              multiple={field.multiple}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                onChange(file); // store file in state
+              }}
+            />
+
             <div className="text-[24px] mb-[6px]">📎</div>
-            <p className="text-[12px] text-text-muted">Click to upload or drag and drop</p>
+
+            <p className="text-[12px] text-text-muted">
+              {value instanceof File
+                ? value.name
+                : 'Click to upload or drag and drop'}
+            </p>
           </div>
         );
 
@@ -434,32 +437,35 @@ const PreviewField: React.FC<{
             disabled={field.disabled}
             readOnly={field.readOnly}
             className={inputClass}
+            style={{
+              width:field.style?.width
+            }}
           />
         );
-    }
-  };
+          }
+        };
 
-  return (
-    <div>
-      {field.type !== 'checkbox' || !field.options || field.options.length <= 1 ? (
-        <label className={labelClass}>
-          {field.label}
-          {field.validation?.required && (
-            <span className="ml-[3px]" style={{ color: '#ff6b9d' }}>*</span>
-          )}
-        </label>
-      ) : (
-        <p className={labelClass}>
-          {field.label}
-          {field.validation?.required && (
-            <span className="ml-[3px]" style={{ color: '#ff6b9d' }}>*</span>
-          )}
-        </p>
-      )}
-      {renderInput()}
-      {field.helpText && (
-        <p className="text-[11px] text-text-muted mt-[5px]">{field.helpText}</p>
-      )}
-    </div>
-  );
+        return (
+          <div>
+            {field.type !== 'checkbox' || !field.options || field.options.length <= 1 ? (
+              <label className={labelClass}>
+                {field.label}
+                {field.validation?.required && (
+                  <span className="ml-[3px]" style={{ color: '#ff6b9d' }}>*</span>
+                )}
+              </label>
+            ) : (
+              <p className={labelClass}>
+                {field.label}
+                {field.validation?.required && (
+                  <span className="ml-[3px]" style={{ color: '#ff6b9d' }}>*</span>
+                )}
+              </p>
+            )}
+            {renderInput()}
+            {field.helpText && (
+              <p className="text-[11px] text-text-muted mt-[5px]">{field.helpText}</p>
+            )}
+          </div>
+        );
 };

@@ -30,8 +30,7 @@ export const FormSettings: React.FC<FormSettingsProps> = ({ schema, onChange }) 
               onChange={e => updateForm({ description: e.target.value })}
               placeholder="Optional description..."
               rows={3}
-              className="w-full px-[10px] py-[7px] bg-bg-base border border-border-default rounded-[6px] text-text-primary text-[12px] outline-none resize-y font-body leading-[1.5] focus:border-border-focus"
-            />
+              className="w-full px-[10px] py-[7px] bg-bg-base border border-border-default rounded-[6px] text-text-primary text-[12px] outline-none resize-y font-body leading-[1.5] transition-all duration-200 focus:border-border-focus focus:shadow-[0_0_0_3px_rgba(6,64,40,0.15)]"            />
           </Field>
         </Section>
 
@@ -87,6 +86,6 @@ const Input: React.FC<{
     value={value}
     onChange={e => onChange(e.target.value)}
     placeholder={placeholder}
-    className="w-full px-[10px] py-[7px] bg-bg-base border border-border-default rounded-[6px] text-text-primary text-[12px] outline-none transition-all duration-200 focus:border-border-focus focus:shadow-[0_0_0_3px_rgba(108,99,255,0.1)]"
+    className="w-full px-[10px] py-[7px] bg-bg-base border border-border-default rounded-[6px] text-text-primary text-[12px] outline-none transition-all duration-200 focus:border-border-focus focus:shadow-[0_0_0_3px_rgba(6,64,40,0.15)]"
   />
 );
