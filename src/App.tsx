@@ -3,6 +3,8 @@ import { FormSchema, FormField, FieldType, ActiveTab, FormRow } from './types';
 import { INITIAL_SCHEMA, createDefaultField, generateFieldId, downloadJSON, migrateFieldsToRows, getAllFields, createDefaultRow } from './utils/helpers';
 import { FieldPalette } from './components/FieldPalette';
 import { BuilderCanvas } from './components/BuilderCanvas';
+import {motion} from 'framer-motion';
+import { useDragControls } from "motion/react"
 import { FieldEditor } from './components/FieldEditor';
 import { FormSettings } from './components/FormSettings';
 import { FormPreview } from './components/FormPreview';
@@ -162,7 +164,7 @@ export default function App() {
           {activeTab === 'builder' && fields.length > 0 && (
             <HeaderBtn onClick={handleClearAll} danger>✕ Clear</HeaderBtn>
           )}
-          <HeaderBtn onClick={() => downloadJSON(schema)} accent>↓ Export JSON</HeaderBtn>
+          <HeaderBtn onClick={() => downloadJSON(schema)} accent> Export JSON</HeaderBtn>
         </div>
       </header>
 
@@ -174,6 +176,7 @@ export default function App() {
           <>
             {/* Left: Field Palette */}
             <FieldPalette onAddField={handleAddField} />
+            
 
             {/* Center: Canvas */}
             <BuilderCanvas
