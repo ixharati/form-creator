@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FormField, FormSchema } from '../types';
 import { motion } from 'framer-motion';
 import Select from 'react-select';
+import { MultiValue, SingleValue } from "react-select";
 interface FormPreviewProps {
   schema: FormSchema;
 }
@@ -173,11 +174,13 @@ const PreviewField: React.FC<{
                   isMulti={isMulti}
                   options = {options}
                   value={selectedValue}
-                  onChange={(selected)=>{
-                    if(isMulti){
-                      onChange((selected||[]).map((s:any)=>s.value))
-                    }else{
-                      onChange((selected as any)?.value||"");
+                  
+
+                  onChange={(selected: MultiValue<any> | SingleValue<any>) => {
+                    if (isMulti) {
+                      onChange((selected as MultiValue<any>).map(s => s.value));
+                    } else {
+                      onChange((selected as SingleValue<any>)?.value || null);
                     }
                   }}
                   menuPortalTarget={document.body}
