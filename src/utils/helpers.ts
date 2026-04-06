@@ -13,7 +13,7 @@ export const INITIAL_SCHEMA: FormSchema = {
     sections: [],
     fields: [],
     submitLabel: 'Submit',
-    cancelLabel: 'Cancel',
+    cancelLabel: false,
     layout: 'single',
   },
   localization: {},
