@@ -16,29 +16,10 @@ interface FieldCardProps {
   isLast: boolean;
 }
 
-const typeColors: Record<string, string> = {
-  text: '#ffbe0b',
-  number: '#ffbe0b',
-  button: '#ffbe0b',
-  email: '#ffbe0b',
-  password: '#ffbe0b',
-  textarea: '#ffbe0b',
-  select: '#ffbe0b',
-  checkbox: '#ffbe0b',
-  radio: '#ffbe0b',
-  date: '#ffbe0b',
-  time: '#ffbe0b',
-  datetime: '#ffbe0b',
-  toggle: '#ffbe0b',
-  range: '#ffbe0b',
-  file: '#ffbe0b',
-};
-
 export const FieldCard: React.FC<FieldCardProps> = ({
   field, isSelected, onSelect, onDelete, onMoveUp, onMoveDown, isFirst, isLast,
 }) => {
   const [hovered, setHovered] = useState(false);
-  const color = typeColors[field.type] || '#6c63ff';
 
   const {
     attributes,
@@ -100,7 +81,7 @@ export const FieldCard: React.FC<FieldCardProps> = ({
         {/* Field info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-[6px]">
-            <span className="font-display text-[14px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">
+            <span className="font-display text-[14px] font-semibold overflow-hidden text-ellipsis whitespace-nowrap" style={{ color: '#000000' }}>
               {field.label}
             </span>
             {field.validation?.required && (  
@@ -108,7 +89,7 @@ export const FieldCard: React.FC<FieldCardProps> = ({
             )}
           </div>
           <div className="flex items-center gap-[6px] mt-[2px]">
-            <span className="text-[11px] font-semibold tracking-[0.04em] text-accent" style={{ color }}>
+            <span className="text-[11px] font-semibold tracking-[0.04em] text-accent" style={{ color: 'var(--accent)' }}>
               {FIELD_LABELS[field.type]}
             </span>
             {/* {field.width !== undefined && (
