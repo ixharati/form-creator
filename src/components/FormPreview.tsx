@@ -114,8 +114,12 @@ const viewWidths: Record<ViewMode, string> = {
 };
 
 export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
+<<<<<<< HEAD
   const rows = schema.form.rows || [];
   const fields = rows.flatMap(row => row.columns.map(col => col.field).filter(Boolean) as FormField[]);
+=======
+  const fields = schema.form.fields || [];
+>>>>>>> 0214f98 (implemented dnd and proper scroll behaviour)
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [submitted, setSubmitted] = useState(false);
 
