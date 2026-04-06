@@ -39,6 +39,7 @@ export interface FormField {
   helpText?: string;
   defaultValue?: string | boolean | number;
   options?: SelectOption[];
+  searchable?: boolean;
   validation?: Validation;
   width?: 'full' | 'half' | 'third';
   disabled?: boolean;
@@ -66,7 +67,7 @@ export interface FormSchema {
     sections?: FormSection[];
     fields?: FormField[];
     submitLabel?: string;
-    cancelLabel?: string;
+    cancelLabel?: false;
     layout?: 'single' | 'wizard';
   };
   localization: Record<string, string>;

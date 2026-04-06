@@ -39,9 +39,9 @@ export const FormSettings: React.FC<FormSettingsProps> = ({ schema, onChange }) 
           <Field label="Submit Label">
             <Input value={schema.form.submitLabel || ''} onChange={v => updateForm({ submitLabel: v })} placeholder="Submit" />
           </Field>
-          <Field label="Cancel Label">
+          {/* <Field label="Cancel Label">
             <Input value={schema.form.cancelLabel || ''} onChange={v => updateForm({ cancelLabel: v })} placeholder="Cancel" />
-          </Field>
+          </Field> */}
         </Section>
 
         <Section title="Configuration">

@@ -3,6 +3,8 @@ import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";im
 import { INITIAL_SCHEMA, createDefaultField, generateFieldId, downloadJSON } from './utils/helpers';
 import { FieldPalette } from './components/FieldPalette';
 import { BuilderCanvas } from './components/BuilderCanvas';
+import {motion} from 'framer-motion';
+import { useDragControls } from "motion/react"
 import { FieldEditor } from './components/FieldEditor';
 import { FormSettings } from './components/FormSettings';
 import { FormPreview } from './components/FormPreview';
@@ -118,7 +120,7 @@ export default function App() {
           {activeTab === 'builder' && fields.length > 0 && (
             <HeaderBtn onClick={handleClearAll} danger>✕ Clear</HeaderBtn>
           )}
-          <HeaderBtn onClick={() => downloadJSON(schema)} accent>↓ Export JSON</HeaderBtn>
+          <HeaderBtn onClick={() => downloadJSON(schema)} accent> Export JSON</HeaderBtn>
         </div>
       </header>
 
@@ -129,17 +131,7 @@ export default function App() {
         {activeTab === 'builder' && (
           <PanelGroup direction="horizontal" className="w-full h-full">
             {/* Left: Field Palette */}
-            <Panel defaultSize={15} minSize={10} maxSize={30} className="overflow-hidden">
-              <FieldPalette onAddField={handleAddField} />
-            </Panel>
-
-            {/* Resize handle between palette and canvas */}
-            <PanelResizeHandle 
-              className="w-1 transition-all duration-200 cursor-col-resize"
-              style={{
-                background: 'var(--border-light, #32323f)',
-              }}
-            />
+            <FieldPalette onAddField={handleAddField} />
 
             {/* Center: Canvas */}
             <Panel defaultSize={60} minSize={30} className="overflow-hidden h-full">
