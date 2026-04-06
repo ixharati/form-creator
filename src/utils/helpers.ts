@@ -42,7 +42,7 @@ export const FIELD_ICONS: Record<FieldType, string> = {
   radio: '◉',
   // date: '📅',
   // time: '⏱',
-  datetime: '📆',
+  datetime: '📆⏱',
   toggle: '⇌',
   range: '⇔',
   file: '📎',
