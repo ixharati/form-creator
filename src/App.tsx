@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";import { FormSchema, FormField, FieldType, ActiveTab } from './types';
+import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
+import { FormSchema, FormField, FieldType, ActiveTab } from './types';
 import { INITIAL_SCHEMA, createDefaultField, generateFieldId, downloadJSON } from './utils/helpers';
 import { FieldPalette } from './components/FieldPalette';
 import { BuilderCanvas } from './components/BuilderCanvas';
