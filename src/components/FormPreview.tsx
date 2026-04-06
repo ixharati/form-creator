@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FormField, FormSchema } from '../types';
+
 interface FormPreviewProps {
   schema: FormSchema;
 }
@@ -8,7 +9,6 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
   const fields = schema.form.fields || [];
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [submitted, setSubmitted] = useState(false);
-  const [viewMode, setViewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
 
   const updateValue = (id: string, val: unknown) => {
     setValues(v => ({ ...v, [id]: val }));
@@ -32,44 +32,8 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto px-6 py-8 flex flex-col h-full">
-      {/* View Mode Selector */}
-      <div className="flex gap-2 mb-4 justify-center">
-        <button
-          onClick={() => setViewMode('desktop')}
-          className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors ${
-            viewMode === 'desktop' ? 'bg-accent text-white' : 'bg-bg-base text-text-secondary border border-border-default'
-          }`}
-        >
-          🖥️ Desktop
-        </button>
-        <button
-          onClick={() => setViewMode('tablet')}
-          className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors ${
-            viewMode === 'tablet' ? 'bg-accent text-white' : 'bg-bg-base text-text-secondary border border-border-default'
-          }`}
-        >
-          📱 Tablet
-        </button>
-        <button
-          onClick={() => setViewMode('mobile')}
-          className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors ${
-            viewMode === 'mobile' ? 'bg-accent text-white' : 'bg-bg-base text-text-secondary border border-border-default'
-          }`}
-        >
-          📱 Mobile
-        </button>
-      </div>
-
-      {/* Form Preview */}
-      <div className="flex justify-center flex-1">
-        <div
-          className={`w-full ${
-            viewMode === 'desktop' ? 'max-w-[600px]' :
-            viewMode === 'tablet' ? 'max-w-[768px]' :
-            'max-w-[375px]'
-          } bg-bg-elevated border border-border-default overflow-auto shadow-lg`}
-        >
+    <div className="flex-1 overflow-y-auto px-6 py-8 flex h-full justify-center">
+      <div className="w-full max-w-[600px] bg-bg-elevated border border-border-default overflow-auto shadow-lg">
         {/* Form header */}
         <div
           className="px-8 pt-7 pb-5 border-b border-border-default"
@@ -85,21 +49,21 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
 
         {/* Fields */}
         <div className="px-8 py-6 flex flex-wrap gap-4">
-          {fields.map(field => (
-            <div
-              key={field.id}
-              style={{
-                width: field.width === 'half' ? 'calc(50% - 8px)' :
-                       field.width === 'third' ? 'calc(33.3% - 11px)' : '100%',
-              }}
-            >
-              <PreviewField
-                field={field}
-                value={values[field.id]}
-                onChange={v => updateValue(field.id, v)}
-              />
-            </div>
-          ))}
+          {fields.map(field => {
+            const fieldWidth = field.width ? `${field.width}px` : '100%';
+            return (
+              <div
+                key={field.id}
+                style={{ width: fieldWidth }}
+              >
+                <PreviewField
+                  field={field}
+                  value={values[field.id]}
+                  onChange={v => updateValue(field.id, v)}
+                />
+              </div>
+            );
+          })}
         </div>
 
         {/* Footer */}
@@ -119,7 +83,6 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
           </button>
         </div>
       </div>
-    </div>
     </div>
   );
 };
@@ -154,10 +117,16 @@ const PreviewField: React.FC<{
             value={(value as string) || ''}
             onChange={e => onChange(e.target.value)}
             disabled={field.disabled}
-            className={`${inputClass} cursor-pointer`}
+            className={inputClass}
           >
-            <option value="">-- Select --</option>
-            {field.options?.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+            <option value="" disabled hidden>
+              {field.placeholder || 'Select an option'}
+            </option>
+            {field.options?.map(o => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
           </select>
         );
 

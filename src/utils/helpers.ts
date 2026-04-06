@@ -13,7 +13,7 @@ export const INITIAL_SCHEMA: FormSchema = {
     sections: [],
     fields: [],
     submitLabel: 'Submit',
-    cancelLabel: 'Cancel',
+    cancelLabel: false,
     layout: 'single',
   },
   localization: {},
@@ -32,7 +32,7 @@ export const INITIAL_SCHEMA: FormSchema = {
 export const FIELD_ICONS: Record<FieldType, string> = {
   text: 'T',
   number: '#',
-  email: '@',
+  // email: '@',
   password: '🔒',
   button: '▸',
   textarea: '¶',
@@ -40,8 +40,8 @@ export const FIELD_ICONS: Record<FieldType, string> = {
   multiselect: '☰',
   checkbox: '☑',
   radio: '◉',
-  date: '📅',
-  time: '⏱',
+  // date: '📅',
+  // time: '⏱',
   datetime: '📆',
   toggle: '⇌',
   range: '⇔',
@@ -53,7 +53,7 @@ export const FIELD_ICONS: Record<FieldType, string> = {
 export const FIELD_LABELS: Record<FieldType, string> = {
   text: 'Text',
   number: 'Number',
-  email: 'Email',
+  // email: 'Email',
   password: 'Password',
   textarea: 'Text Area',
   select: 'Dropdown',
@@ -61,8 +61,8 @@ export const FIELD_LABELS: Record<FieldType, string> = {
   button:"Button",
   checkbox: 'Checkbox',
   radio: 'Radio Group',
-  date: 'Date',
-  time: 'Time',
+  // date: 'Date',
+  // time: 'Time',
   datetime: 'Date & Time',
   toggle: 'Toggle',
   range: 'Range Slider',
@@ -72,15 +72,16 @@ export const FIELD_LABELS: Record<FieldType, string> = {
 export const FIELD_GROUPS = [
   {
     label: 'Text Input',
-    fields: ['text', 'number', 'email', 'password', 'button', 'textarea'] as FieldType[],
+    fields: ['text', 'number', 'password', 'button', 'textarea'] as FieldType[],
   },
   {
     label: 'Choice',
-    fields: ['select', 'multiselect', 'checkbox', 'radio'] as FieldType[],
+    fields: ['select', 'checkbox', 'radio'] as FieldType[],
   },
   {
     label: 'Date & Time',
-    fields: ['date', 'time', 'datetime'] as FieldType[],
+    // fields: ['date', 'time', 'datetime'] as FieldType[],
+    fields: ['datetime'] as FieldType[],
   },
   {
     label: 'Special',
@@ -95,7 +96,6 @@ export const createDefaultField = (type: FieldType, id: string): FormField => {
     label: FIELD_LABELS[type],
     placeholder: type === 'textarea' ? 'Enter text here...' : type === 'text' ? 'Enter value...' : undefined,
     validation: { required: false },
-    width: 'full',
   };
   if (['select', 'multiselect', 'radio', 'checkbox'].includes(type)) {
     base.options = [

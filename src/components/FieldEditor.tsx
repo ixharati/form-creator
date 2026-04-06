@@ -1,6 +1,5 @@
 import React from 'react';
 import { FormField, SelectOption } from '../types';
-import { generateFieldId } from '../utils/helpers';
 
 interface FieldEditorProps {
   field: FormField;
@@ -11,6 +10,9 @@ export const FieldEditor: React.FC<FieldEditorProps> = ({ field, onChange }) => 
   const update = (patch: Partial<FormField>) => onChange({ ...field, ...patch });
   const updateValidation = (patch: Partial<FormField['validation']>) =>
     onChange({ ...field, validation: { ...field.validation, ...patch } });
+
+  const isMultiSelect = field.type === 'select';
+  const isDateTime = field.type === 'datetime';
 
   const hasOptions = ['select', 'multiselect', 'radio', 'checkbox'].includes(field.type);
   const isRange = field.type === 'range';
@@ -36,8 +38,8 @@ export const FieldEditor: React.FC<FieldEditorProps> = ({ field, onChange }) => 
           <Field label="Help Text">
             <Input value={field.helpText || ''} onChange={v => update({ helpText: v })} placeholder="Helper description" />
           </Field>
-          <Field label="Width">
-            <Select
+          {/* <Field label="Width"> */}
+            {/* <Select
               value={field.width || 'full'}
               onChange={v => update({ width: v as FormField['width'] })}
               options={[
@@ -45,9 +47,63 @@ export const FieldEditor: React.FC<FieldEditorProps> = ({ field, onChange }) => 
                 { label: 'Half', value: 'half' },
                 { label: 'Third', value: 'third' },
               ]}
-            />
-          </Field>
+            /> */}
+            {/* <input
+              type="number"
+              className="bg-bg-surface"
+              placeholder="Enter value (px)"
+              value={field.style?.width ? parseInt(field.style.width) : ''}
+              onChange={(e) => {
+                let val = e.target.value;
+                update({
+                  ...field,
+                  style: {
+                    ...field.style,
+                    width: val === '' ? undefined : `${Number(val)}px`,
+                  },
+                });
+              }}
+            /> */}
+          {/* </Field> */}
+          {isMultiSelect && (
+            <Field label="Multiple Selections">
+                <div>
+                  {isMultiSelect && (
+                    <div>
+                      <input type='checkbox' checked={field.multiple} onChange={e=>update({multiple:e.target.checked})} />
+                      <label className="ml-[6px] text-[12px] text-text-muted">Allow multiple selections</label>
+                    </div>
+                  )}
+                </div>
+              </Field>
+          )}
+              
         </Section>
+
+        {/* Date & Time */}
+        {isDateTime && (
+          <>
+            <Field label="Enable Date">
+              <input
+                type="checkbox"
+                checked={field.enableDate ?? true}
+                onChange={(e) =>
+                  update({ enableDate: e.target.checked })
+                }
+              />
+            </Field>
+
+            <Field label="Enable Time">
+              <input
+                type="checkbox"
+                checked={field.enableTime ?? false}
+                onChange={(e) =>
+                  update({ enableTime: e.target.checked })
+                }
+              />
+            </Field>
+          </>
+        )}
 
         {/* Options */}
         {hasOptions && field.options && (
@@ -81,7 +137,7 @@ export const FieldEditor: React.FC<FieldEditorProps> = ({ field, onChange }) => 
                     const opts = field.options!.filter((_, idx) => idx !== i);
                     update({ options: opts });
                   }}
-                  className="w-[26px] h-[26px] bg-transparent border border-border-default rounded-[5px] text-danger cursor-pointer flex items-center justify-center text-[12px] flex-shrink-0"
+                  className="w-[26px] h-[26px] bg-transparent border border-border-default rounded-[5px] text-danger hover:bg-[rgba(255,77,109,0.1)] cursor-pointer flex items-center justify-center text-[12px] flex-shrink-0"
                 >✕</button>
               </div>
             ))}
@@ -92,7 +148,7 @@ export const FieldEditor: React.FC<FieldEditorProps> = ({ field, onChange }) => 
                   options: [...field.options!, { label: `Option ${field.options!.length + 1}`, value: id }],
                 });
               }}
-              className="w-full py-[7px] bg-[rgba(108,99,255,0.1)] border border-dashed border-border-focus rounded-[6px] text-accent cursor-pointer text-[12px] font-display font-semibold mt-1"
+              className="w-full py-[7px] bg-[rgba(6,64,40,0.08)] border border-dashed border-[#064028] rounded-[6px] text-[#064028] hover:bg-[rgba(6,64,40,0.15)] transition-all"
             >+ Add Option</button>
           </Section>
         )}
@@ -105,11 +161,12 @@ export const FieldEditor: React.FC<FieldEditorProps> = ({ field, onChange }) => 
                 <Input type="number" value={String(field.validation?.min ?? 0)} onChange={v => updateValidation({ min: Number(v) })} />
               </Field>
               <Field label="Max">
-                <Input type="number" value={String(field.validation?.max ?? 100)} onChange={v => updateValidation({ max: Number(v) })} />
+                <Input type="number" value={String(field.validation?.max ?? 100
+                )} onChange={v => updateValidation({ max: Number(v) })} />
               </Field>
             </div>
             <Field label="Default Value">
-              <Input type="number" value={String(field.defaultValue ?? 50)} onChange={v => update({ defaultValue: Number(v) })} />
+              <Input type="number" value={String(field.defaultValue ?? 100)} onChange={v => update({ defaultValue: Number(v) })} />
             </Field>
           </Section>
         )}
@@ -154,7 +211,7 @@ export const FieldEditor: React.FC<FieldEditorProps> = ({ field, onChange }) => 
   );
 };
 
-/* ---------- Sub-components ---------- */
+/* Sub-components  */
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
   <div className="mb-5">
@@ -188,7 +245,7 @@ const Input: React.FC<{
     value={value}
     onChange={e => onChange(e.target.value)}
     placeholder={placeholder}
-    className="w-full px-[10px] py-[7px] bg-bg-base border border-border-default rounded-[6px] text-text-primary text-[12px] outline-none transition-all duration-200 focus:border-border-focus focus:shadow-[0_0_0_3px_rgba(108,99,255,0.1)]"
+    className="w-full px-[10px] py-[7px] bg-bg-base border border-border-default rounded-[6px] text-text-primary text-[12px] outline-none transition-all duration-200 -focus:shadow-[0_0_0_3px_rgba(108,99,255,0.1)] +focus:shadow-[0_0_0_3px_rgba(6,64,40,0.15)]"
   />
 );
 
@@ -200,7 +257,7 @@ const Select: React.FC<{
   <select
     value={value}
     onChange={e => onChange(e.target.value)}
-    className="w-full px-[10px] py-[7px] bg-bg-base border border-border-default rounded-[6px] text-text-primary text-[12px] outline-none cursor-pointer"
+    className="w-full overflow-scroll bg-bg-base border border-border-default rounded-[6px] text-text-primary text-[12px] outline-none cursor-pointer"
   >
     {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
   </select>
@@ -219,8 +276,8 @@ const Toggle: React.FC<{
     <div
       className="w-9 h-5 rounded-full relative transition-all duration-200 flex-shrink-0"
       style={{
-        background: value ? '#6c63ff' : '#24242f',
-        border: `1px solid ${value ? '#6c63ff' : '#2a2a38'}`,
+        background: value ? '#064028' : '#e6f0eb',
+        border: `1px solid ${value ? '#064028' : '#d6e5dd'}`,
       }}
     >
       <div

@@ -1,7 +1,7 @@
 export type FieldType =
   | 'text'
   | 'number'
-  | 'email'
+  // | 'email'
   | 'password'
   | 'textarea'
   | 'select'
@@ -21,6 +21,7 @@ export interface SelectOption {
   value: string;
 }
 
+
 export interface Validation {
   required?: boolean;
   minLength?: number;
@@ -31,18 +32,31 @@ export interface Validation {
   patternMessage?: string;
 }
 
+export interface FieldStyle{
+  width?:`${number}px` | `${number}%`;
+  height?: 'string';
+  fontSize?: 'string';
+  padding?: 'string';
+  margin?: 'string';
+}
+
 export interface FormField {
   id: string;
   type: FieldType;
   label: string;
   placeholder?: string;
+  multiple?: boolean;
   helpText?: string;
   defaultValue?: string | boolean | number;
   options?: SelectOption[];
+  searchable?: boolean;
   validation?: Validation;
-  width?: 'full' | 'half' | 'third';
+  enableDate?:boolean;
+  enableTime?:boolean;
+  width?: number;
   disabled?: boolean;
   readOnly?: boolean;
+  style?:FieldStyle;
 }
 
 export interface FormSection {
@@ -66,7 +80,7 @@ export interface FormSchema {
     sections?: FormSection[];
     fields?: FormField[];
     submitLabel?: string;
-    cancelLabel?: string;
+    cancelLabel?: false;
     layout?: 'single' | 'wizard';
   };
   localization: Record<string, string>;

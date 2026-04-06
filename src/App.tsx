@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 import { FormSchema, FormField, FieldType, ActiveTab } from './types';
 import { INITIAL_SCHEMA, createDefaultField, generateFieldId, downloadJSON } from './utils/helpers';
 import { FieldPalette } from './components/FieldPalette';
@@ -49,10 +48,6 @@ export default function App() {
     updateFields(fields.map(f => f.id === updated.id ? updated : f));
   }, [fields, updateFields]);
 
-  const handleReorderFields = useCallback((reorderedFields: FormField[]) => {
-    updateFields(reorderedFields);
-  }, [updateFields]);
-
   const handleSelectField = useCallback((id: string) => {
     setSelectedFieldId(id);
     setRightPanel('field');
@@ -71,9 +66,9 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-bg-base">
+    <div className="h-screen flex flex-col overflow-hidden bg--bg-base">
       {/* ── Top Bar ── */}
-      <header className="h-[52px] min-h-[52px] flex items-center justify-between px-5 bg-bg-surface border-b border-border-default z-10 flex-shrink-0">
+      <header className="h-[52px] min-h-[52px] flex items-center justify-between px-5 bg-bg-primary border-b border-border-default z-10 flex-shrink-0">
         {/* Logo */}
         <div className="flex items-center gap-[10px]">
           <div
@@ -85,22 +80,16 @@ export default function App() {
           >F</div>
           <span
             className="font-display font-extrabold text-base tracking-tight"
-            style={{
-              background: 'linear-gradient(90deg, #f0f0fa, #9090aa)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              letterSpacing: '-0.02em',
-            }}
           >FormBuilder</span>
         </div>
 
         {/* Tab switcher */}
-        <div className="flex bg-bg-elevated border border-border-default rounded-[10px] p-[3px] gap-[2px]">
+        <div className="flex bg-bg-primary border border-border-default rounded-[10px] p-[3px] gap-[2px]">
           {(['builder', 'preview', 'json'] as ActiveTab[]).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-[5px] rounded-[6px] font-display font-semibold text-[12px] cursor-pointer transition-all duration-200 tracking-wider capitalize border ${
+              className={`px-4 py-[5px] bg--bg-primary rounded-[6px] font-display font-semibold text-[12px] cursor-pointer transition-all duration-200 tracking-wider capitalize border ${
                 activeTab === tab
                   ? 'bg-bg-overlay border-border-light-custom text-text-primary'
                   : 'bg-transparent border-transparent text-text-muted'
@@ -113,89 +102,67 @@ export default function App() {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <span className="text-[11px] text-text-muted bg-bg-elevated px-[10px] py-[3px] rounded-full border border-border-default">
+          <span className="text-[11px] text-text-muted bg-[#ffbe0b] px-[10px] py-[3px] rounded-full border border-border-default">
             {fields.length} field{fields.length !== 1 ? 's' : ''}
           </span>
           {activeTab === 'builder' && fields.length > 0 && (
             <HeaderBtn onClick={handleClearAll} danger>✕ Clear</HeaderBtn>
           )}
-          <HeaderBtn onClick={() => downloadJSON(schema)} accent>↓ Export JSON</HeaderBtn>
+          <HeaderBtn onClick={() => downloadJSON(schema)} accent> Export JSON</HeaderBtn>
         </div>
       </header>
 
       {/* ── Main Body ── */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 flex overflow-hidden">
 
         {/* Builder layout */}
         {activeTab === 'builder' && (
-          <PanelGroup direction="horizontal" className="w-full h-full">
+          <>
             {/* Left: Field Palette */}
-            <Panel defaultSize={15} minSize={10} maxSize={30} className="overflow-hidden">
-              <FieldPalette onAddField={handleAddField} />
-            </Panel>
-
-            {/* Resize handle between palette and canvas */}
-            <PanelResizeHandle 
-              className="w-1 transition-all duration-200 cursor-col-resize"
-              style={{
-                background: 'var(--border-light, #32323f)',
-              }}
-            />
+            <FieldPalette onAddField={handleAddField} />
+            
 
             {/* Center: Canvas */}
-            <Panel defaultSize={60} minSize={30} className="overflow-hidden h-full">
-              <BuilderCanvas
-                fields={fields}
-                selectedId={selectedFieldId}
-                onSelectField={handleSelectField}
-                onDeleteField={handleDeleteField}
-                onMoveField={handleMoveField}
-                onAddField={handleAddField}
-                onReorderFields={handleReorderFields}
-                formTitle={schema.form.title || schema.form.key}
-              />
-            </Panel>
-
-            {/* Resize handle between canvas and editor */}
-            <PanelResizeHandle 
-              className="w-1 transition-all duration-200 cursor-col-resize"
-              style={{
-                background: 'var(--border-light, #32323f)',
-              }}
+            <BuilderCanvas
+              fields={fields}
+              selectedId={selectedFieldId}
+              onSelectField={handleSelectField}
+              onDeleteField={handleDeleteField}
+              onMoveField={handleMoveField}
+              onAddField={handleAddField}
+              formTitle={schema.form.title || schema.form.key}
             />
 
             {/* Right: Editor Panel */}
-            <Panel defaultSize={25} minSize={15} maxSize={50} className="overflow-hidden bg-bg-surface border-l border-border-default flex flex-col">
-              <aside className="h-full flex flex-col overflow-hidden">
-                {/* Panel tab switcher */}
-                <div className="flex border-b border-border-default flex-shrink-0">
-                  {(['settings', 'field'] as const).map(panel => (
-                    <button
-                      key={panel}
-                      onClick={() => setRightPanel(panel)}
-                      className={`flex-1 py-[10px] px-2 font-display font-semibold text-[11px] cursor-pointer transition-all duration-200 tracking-[0.06em] uppercase border-b-2 border-t-0 border-l-0 border-r-0 ${
-                        rightPanel === panel
-                          ? 'bg-bg-elevated border-accent text-text-primary'
-                          : 'bg-transparent border-transparent text-text-muted'
-                      }`}
-                    >
-                      {panel === 'settings' ? '⚙ Form' : '✎ Field'}
-                    </button>
-                  ))}
-                </div>
+            <aside className="w-[260px] min-w-[260px] bg-bg-surface border-l border-border-default flex flex-col overflow-hidden">
+              {/* Panel tab switcher */}
+              <div className="flex border-b border-border-default flex-shrink-0">
+                {(['settings', 'field'] as const).map(panel => (
+                  <button
+                    key={panel}
+                    onClick={() => setRightPanel(panel)}
+                    className={`flex-1 py-[10px] px-2 font-display font-semibold text-[11px] cursor-pointer transition-all duration-200 tracking-[0.06em] uppercase border-b-2 border-t-0 border-l-0 border-r-0 ${
+                      rightPanel === panel
+                        ? 'bg-bg-elevated border-accent text-text-primary'
+                        : 'bg-transparent border-transparent text-text-muted'
+                    }`}
+                  >
+                    {panel === 'settings' ? '⚙ Form' : '✎ Field'}
+                  </button>
+                ))}
+              </div>
 
-                <div className="flex-1 overflow-hidden">
-                  {rightPanel === 'settings' ? (
-                    <FormSettings schema={schema} onChange={setSchema} />
-                  ) : selectedField ? (
-                    <FieldEditor field={selectedField} onChange={handleFieldChange} />
-                  ) : (
-                    <NoFieldSelected onShowSettings={() => setRightPanel('settings')} />
-                  )}
-                </div>
-              </aside>
-            </Panel>
-          </PanelGroup>
+              <div className="flex-1 overflow-hidden">
+                {rightPanel === 'settings' ? (
+                  <FormSettings schema={schema} onChange={setSchema} />
+                ) : selectedField ? (
+                  <FieldEditor field={selectedField} onChange={handleFieldChange} />
+                ) : (
+                  <NoFieldSelected onShowSettings={() => setRightPanel('settings')} />
+                )}
+              </div>
+            </aside>
+          </>
         )}
 
         {/* Preview tab */}
@@ -222,9 +189,9 @@ const HeaderBtn: React.FC<{
 }> = ({ children, onClick, accent, danger }) => (
   <button
     onClick={onClick}
-    className={`px-[14px] py-[6px] rounded-[6px] font-display font-bold text-[12px] cursor-pointer transition-all duration-200 border ${
+    className={`px-[14px] py-[6px] rounded-[6px] text-black font-bold text-[12px] cursor-pointer transition-all duration-200 border ${
       accent
-        ? 'bg-accent border-accent text-white shadow-accent hover:opacity-[0.88]'
+        ? 'bg-[#ffbe0b] border-accent text-white shadow-primary hover:opacity-[0.88]'
         : danger
         ? 'bg-transparent border-border-default text-danger hover:bg-[rgba(255,77,109,0.1)] hover:border-danger'
         : 'bg-bg-elevated border-border-default text-text-secondary'
