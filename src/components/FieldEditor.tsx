@@ -245,7 +245,7 @@ const Input: React.FC<{
     value={value}
     onChange={e => onChange(e.target.value)}
     placeholder={placeholder}
-    className="w-full px-[10px] py-[7px] bg-bg-base border border-border-default rounded-[6px] text-text-primary text-[12px] outline-none transition-all duration-200 -focus:shadow-[0_0_0_3px_rgba(108,99,255,0.1)] +focus:shadow-[0_0_0_3px_rgba(6,64,40,0.15)]"
+    className="w-full px-[10px] py-[7px] bg-white border border-[#e0e0e0] rounded-[6px] text-[#2d2d2d] text-[12px] outline-none transition-all duration-200 focus:border-[#ffbe0b] focus:shadow-[0_0_0_3px_rgba(255,190,11,0.15)]"
   />
 );
 
@@ -257,7 +257,7 @@ const Select: React.FC<{
   <select
     value={value}
     onChange={e => onChange(e.target.value)}
-    className="w-full overflow-scroll bg-bg-base border border-border-default rounded-[6px] text-text-primary text-[12px] outline-none cursor-pointer"
+    className="w-full overflow-scroll bg-white border border-[#e0e0e0] rounded-[6px] text-[#2d2d2d] text-[12px] outline-none cursor-pointer"
   >
     {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
   </select>

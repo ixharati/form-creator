@@ -17,21 +17,21 @@ interface FieldCardProps {
 }
 
 const typeColors: Record<string, string> = {
-  text: '#064028',
-  number: '#064028',
-  button: '#064028',
-  email: '#064028',
-  password: '#064028',
-  textarea: '#064028',
-  select: '#064028',
-  checkbox: '#064028',
-  radio: '#064028',
-  date: '#064028',
-  time: '#064028',
-  datetime: '#064028',
-  toggle: '#064028',
-  range: '#064028',
-  file: '#064028',
+  text: '#ffbe0b',
+  number: '#ffbe0b',
+  button: '#ffbe0b',
+  email: '#ffbe0b',
+  password: '#ffbe0b',
+  textarea: '#ffbe0b',
+  select: '#ffbe0b',
+  checkbox: '#ffbe0b',
+  radio: '#ffbe0b',
+  date: '#ffbe0b',
+  time: '#ffbe0b',
+  datetime: '#ffbe0b',
+  toggle: '#ffbe0b',
+  range: '#ffbe0b',
+  file: '#ffbe0b',
 };
 
 export const FieldCard: React.FC<FieldCardProps> = ({
