@@ -120,9 +120,9 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg--bg-base">
+    <div className="h-screen flex flex-col overflow-hidden bg-bg-base">
       {/* ── Top Bar ── */}
-      <header className="h-[52px] min-h-[52px] flex items-center justify-between px-5 bg-bg-primary border-b border-border-default z-10 flex-shrink-0">
+      <header className="h-[52px] min-h-[52px] flex items-center justify-between px-5 bg-bg-surface border-b border-border-default z-10 flex-shrink-0">
         {/* Logo */}
         <div className="flex items-center gap-[10px]">
           <div
@@ -134,16 +134,16 @@ export default function App() {
           >F</div>
           <span
             className="font-display font-extrabold text-base tracking-tight"
-          >FormCreator</span>
+          >FormBuilder</span>
         </div>
 
         {/* Tab switcher */}
-        <div className="flex bg-bg-primary border border-border-default rounded-[10px] p-[3px] gap-[2px]">
+        <div className="flex bg-bg-elevated border border-border-default rounded-[10px] p-[3px] gap-[2px]">
           {(['builder', 'preview', 'json'] as ActiveTab[]).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-[5px] bg--bg-primary rounded-[6px] font-display font-semibold text-[12px] cursor-pointer transition-all duration-200 tracking-wider capitalize border ${
+              className={`px-4 py-[5px] rounded-[6px] font-display font-semibold text-[12px] cursor-pointer transition-all duration-200 tracking-wider capitalize border ${
                 activeTab === tab
                   ? 'bg-bg-overlay border-border-light-custom text-text-primary'
                   : 'bg-transparent border-transparent text-text-muted'
@@ -156,13 +156,13 @@ export default function App() {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <span className="text-[11px] text-text-muted bg-[#ffbe0b] px-[10px] py-[3px] rounded-full border border-border-default">
+          <span className="text-[11px] text-text-muted bg-bg-elevated px-[10px] py-[3px] rounded-full border border-border-default">
             {fields.length} field{fields.length !== 1 ? 's' : ''}
           </span>
           {activeTab === 'builder' && fields.length > 0 && (
             <HeaderBtn onClick={handleClearAll} danger>✕ Clear</HeaderBtn>
           )}
-          <HeaderBtn onClick={() => downloadJSON(schema)} accent> Export JSON</HeaderBtn>
+          <HeaderBtn onClick={() => downloadJSON(schema)} accent>↓ Export JSON</HeaderBtn>
         </div>
       </header>
 
@@ -173,8 +173,7 @@ export default function App() {
         {activeTab === 'builder' && (
           <>
             {/* Left: Field Palette */}
-            <FieldPalette onAddField={handleAddField} onAddRow={handleAddRow} />
-            
+            <FieldPalette onAddField={handleAddField} />
 
             {/* Center: Canvas */}
             <BuilderCanvas
@@ -244,9 +243,9 @@ const HeaderBtn: React.FC<{
 }> = ({ children, onClick, accent, danger }) => (
   <button
     onClick={onClick}
-    className={`px-[14px] py-[6px] rounded-[6px] text-black font-bold text-[12px] cursor-pointer transition-all duration-200 border ${
+    className={`px-[14px] py-[6px] rounded-[6px] font-display font-bold text-[12px] cursor-pointer transition-all duration-200 border ${
       accent
-        ? 'bg-[#ffbe0b] border-accent text-white shadow-primary hover:opacity-[0.88]'
+        ? 'bg-accent border-accent text-white shadow-accent hover:opacity-[0.88]'
         : danger
         ? 'bg-transparent border-border-default text-danger hover:bg-[rgba(255,77,109,0.1)] hover:border-danger'
         : 'bg-bg-elevated border-border-default text-text-secondary'

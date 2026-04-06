@@ -7,12 +7,12 @@ interface FormPreviewProps {
 
 export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
   const rows = schema.form.rows || [];
-  const fields = rows.flatMap(r => r.columns.map(c => c.field).filter(Boolean) as FormField[]);
+  const fields = rows.flatMap(row => row.columns.map(col => col.field).filter(Boolean) as FormField[]);
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [submitted, setSubmitted] = useState(false);
 
   const updateValue = (id: string, val: unknown) => {
-    setValues(v => ({ ...v, [id]: val }));
+    setValues(prev => ({ ...prev, [id]: val }));
   };
 
   const handleSubmit = () => {
@@ -23,7 +23,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
   if (fields.length === 0) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center gap-3 text-text-muted p-10">
-        <div className="text-[48px]">◻</div>
+        <div className="text-[48px]">?</div>
         <p className="font-display text-[16px] font-semibold">No fields yet</p>
         <p className="text-[13px] text-center max-w-[280px]">
           Add fields from the left panel to see your form preview here.
@@ -35,7 +35,6 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
   return (
     <div className="flex-1 overflow-y-auto px-6 py-8 flex h-full justify-center">
       <div className="w-full max-w-[600px] bg-bg-elevated border border-border-default overflow-auto shadow-lg">
-        {/* Form header */}
         <div
           className="px-8 pt-7 pb-5 border-b border-border-default"
           style={{ background: 'linear-gradient(135deg, #1e1e28 0%, #18181f 100%)' }}
@@ -48,18 +47,21 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
           )}
         </div>
 
-        {/* Fields */}
         <div className="px-8 py-6 flex flex-col gap-4">
           {rows.map(row => (
-            <div key={row.id} className="flex gap-4">
+            <div key={row.id} className="flex gap-4 flex-wrap">
               {row.columns.map(col => (
                 <div key={col.id} style={{ width: `${col.width}%` }}>
-                  {col.field && (
+                  {col.field ? (
                     <PreviewField
                       field={col.field}
                       value={values[col.field.id]}
-                      onChange={v => updateValue(col.field!.id, v)}
+                      onChange={val => updateValue(col.field!.id, val)}
                     />
+                  ) : (
+                    <div className="h-full rounded-[10px] border border-border-default bg-bg-base p-4 text-[12px] text-text-muted">
+                      Empty column
+                    </div>
                   )}
                 </div>
               ))}
@@ -67,7 +69,6 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
           ))}
         </div>
 
-        {/* Footer */}
         <div className="px-8 pb-6 pt-4 flex gap-[10px] justify-end border-t border-border-default">
           <button className="px-5 py-[9px] bg-transparent border border-border-default rounded-[10px] text-text-secondary font-display font-semibold text-[13px] cursor-pointer">
             {schema.form.cancelLabel || 'Cancel'}
@@ -80,7 +81,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
               boxShadow: submitted ? '0 4px 16px rgba(0,212,170,0.4)' : '0 4px 20px rgba(108,99,255,0.25)',
             }}
           >
-            {submitted ? '✓ Submitted!' : (schema.form.submitLabel || 'Submit')}
+            {submitted ? '? Submitted!' : (schema.form.submitLabel || 'Submit')}
           </button>
         </div>
       </div>
@@ -96,7 +97,6 @@ const PreviewField: React.FC<{
   value: unknown;
   onChange: (v: unknown) => void;
 }> = ({ field, value, onChange }) => {
-
   const renderInput = () => {
     switch (field.type) {
       case 'textarea':
@@ -123,31 +123,38 @@ const PreviewField: React.FC<{
             <option value="" disabled hidden>
               {field.placeholder || 'Select an option'}
             </option>
-            {field.options?.map(o => (
-              <option key={o.value} value={o.value}>
-                {o.label}
+            {field.options?.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
               </option>
             ))}
           </select>
         );
 
-        case 'button':
-          return(
-            <button onClick={()=>{onChange(true)}} className='px-4 py-2.5 bg-[var(--accent)] border-0 rounded-md text-white font-semibold text-[13px] transition shadow-[var(--shadow--accent)]'>
-              {field.placeholder||"button"}
-            </button>
-          )
+      case 'button':
+        return (
+          <button
+            onClick={() => onChange(true)}
+            className="px-4 py-2.5 bg-[var(--accent)] border-0 rounded-md text-white font-semibold text-[13px] transition shadow-[var(--shadow--accent)]"
+          >
+            {field.placeholder || 'Button'}
+          </button>
+        );
 
       case 'multiselect':
         return (
           <select
             multiple
             value={(value as string[]) || []}
-            onChange={e => onChange(Array.from(e.target.selectedOptions).map(o => o.value))}
+            onChange={e => onChange(Array.from(e.target.selectedOptions).map(opt => opt.value))}
             disabled={field.disabled}
             className={`${inputClass} h-[90px] cursor-pointer`}
           >
-            {field.options?.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+            {field.options?.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
         );
 
@@ -155,28 +162,29 @@ const PreviewField: React.FC<{
         if (field.options && field.options.length > 1) {
           return (
             <div className="flex flex-col gap-2">
-              {field.options.map(opt => (
-                <label key={opt.value} className="flex items-center gap-2 cursor-pointer">
+              {field.options.map(option => (
+                <label key={option.value} className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={((value as string[]) || []).includes(opt.value)}
+                    checked={((value as string[]) || []).includes(option.value)}
                     onChange={e => {
-                      const cur = (value as string[]) || [];
-                      onChange(e.target.checked ? [...cur, opt.value] : cur.filter(v => v !== opt.value));
+                      const current = (value as string[]) || [];
+                      onChange(e.target.checked ? [...current, option.value] : current.filter(v => v !== option.value));
                     }}
                     className="w-[15px] h-[15px] accent-accent"
                   />
-                  <span className="text-[13px] text-text-primary">{opt.label}</span>
+                  <span className="text-[13px] text-text-primary">{option.label}</span>
                 </label>
               ))}
             </div>
           );
         }
+
         return (
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
-              checked={!!(value)}
+              checked={!!value}
               onChange={e => onChange(e.target.checked)}
               className="w-[15px] h-[15px] accent-accent"
             />
@@ -189,17 +197,17 @@ const PreviewField: React.FC<{
       case 'radio':
         return (
           <div className="flex flex-col gap-2">
-            {field.options?.map(opt => (
-              <label key={opt.value} className="flex items-center gap-2 cursor-pointer">
+            {field.options?.map(option => (
+              <label key={option.value} className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="radio"
                   name={field.id}
-                  value={opt.value}
-                  checked={value === opt.value}
-                  onChange={() => onChange(opt.value)}
+                  value={option.value}
+                  checked={value === option.value}
+                  onChange={() => onChange(option.value)}
                   className="w-[15px] h-[15px] accent-accent"
                 />
-                <span className="text-[13px] text-text-primary">{opt.label}</span>
+                <span className="text-[13px] text-text-primary">{option.label}</span>
               </label>
             ))}
           </div>
@@ -253,10 +261,8 @@ const PreviewField: React.FC<{
 
       case 'file':
         return (
-          <div
-            className="border-2 border-dashed border-border-default rounded-[10px] p-5 text-center cursor-pointer transition-all duration-200 hover:border-accent"
-          >
-            <div className="text-[24px] mb-[6px]">📎</div>
+          <div className="border-2 border-dashed border-border-default rounded-[10px] p-5 text-center cursor-pointer transition-all duration-200 hover:border-accent">
+            <div className="text-[24px] mb-[6px]">??</div>
             <p className="text-[12px] text-text-muted">Click to upload or drag and drop</p>
           </div>
         );
