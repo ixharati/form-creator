@@ -176,7 +176,6 @@ export default function App() {
           <>
             {/* Left: Field Palette */}
             <FieldPalette onAddField={handleAddField} />
-            
 
             {/* Center: Canvas */}
             <BuilderCanvas

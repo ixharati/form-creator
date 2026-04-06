@@ -14,13 +14,9 @@ const PRIMARY = '#ffbe0b';
 
 export const FieldPalette: React.FC<FieldPaletteProps> = ({ onAddField, onAddRow }) => {
   return (
-    <motion.aside className="w-[400px] bg-white border-r border-[#e0e0e0] flex flex-col overflow-hidden">
-      
-      {/* Header */}
-      <div className="px-4 pt-5 pb-3 border-b border-[#e0e0e0] bg-white">
-        <p className="font-display text-[11px]  font-bold tracking-[0.12em] uppercase text-[#2d2d2d]">
-          Field Types
-        </p>
+    <aside className="w-[220px] min-w-[220px] bg-bg-surface border-r border-border-default flex flex-col overflow-hidden">
+      <div className="px-4 pt-5 pb-3 border-b border-border-default">
+        <p className="font-display text-[11px] font-bold tracking-[0.12em] uppercase text-text-muted">Field Types</p>
       </div>
 
       {/* Layout Controls */}
@@ -70,23 +66,8 @@ export const FieldPalette: React.FC<FieldPaletteProps> = ({ onAddField, onAddRow
               {group.fields.map(type => (
                 <button
                   key={type}
-                  draggable
-                  onDragStart={(e) => {
-                    e.dataTransfer.effectAllowed = 'copy';
-                    e.dataTransfer.setData('fieldType', type);
-                  }}
                   onClick={() => onAddField(type)}
-                  className="
-                    flex items-center gap-[9px] px-[10px] py-[8px]
-                    rounded-[8px] text-[13px] w-full text-left
-                    font-body transition-all duration-200
-                    border border-transparent
-                    text-[#2d2d2d]
-                    hover:bg-[#f9f9f9]
-                    hover:border-[#e0e0e0]
-                    hover:text-[#ffbe0b]
-                    active:scale-[0.98]
-                  "
+                  className="flex items-center gap-[9px] px-[10px] py-[7px] bg-transparent border border-transparent rounded-[6px] text-text-secondary text-[13px] cursor-pointer transition-all duration-200 text-left w-full font-body hover:bg-bg-overlay hover:border-border-default hover:text-text-primary"
                   title={`Add ${FIELD_LABELS[type]}`}
                 >
                   

@@ -1,125 +1,13 @@
-// import React, { useState } from 'react';
-// import { FormField, FormSchema } from '../types';
-// import Select from 'react-select/base';
-
-// interface FormPreviewProps {
-//   schema: FormSchema;
-// }
-
-// export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
-//   const fields = schema.form.fields || [];
-//   const [values, setValues] = useState<Record<string, unknown>>({});
-//   const [submitted, setSubmitted] = useState(false);
-
-//   const updateValue = (id: string, val: unknown) => {
-//     setValues(v => ({ ...v, [id]: val }));
-//   };
-
-//   // const handleCancel = () => {
-//   //   setValues({});
-//   //   setSubmitted(false);
-//   // };
-
-//   const handleSubmit = () => {
-//     setSubmitted(true);
-//     setTimeout(() => setSubmitted(false), 3000);
-//   };
-
-//   if (fields.length === 0) {
-//     return (
-//       <div className="flex-1 flex flex-col items-center justify-center gap-3 text-text-muted p-10">
-//         <div className="text-[48px]">◻</div>
-//         <p className="font-display text-[16px] font-semibold">No fields yet</p>
-//         <p className="text-[13px] text-center max-w-[280px]">
-//           Add fields from the left panel to see your form preview here.
-//         </p>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="flex-1 overflow-y-auto px-6 py-8 flex h-full justify-center">
-//       <div className="w-full max-w-[600px] bg-bg-elevated border border-border-default overflow-auto shadow-lg">
-//         {/* Form header */}
-//         <div
-//           className="px-8 pt-7 pb-5 border-b border-border-default"
-//           style={{ background: 'linear-gradient(135deg, #1e1e28 0%, #18181f 100%)' }}
-//         >
-//           <h2 className="font-display text-[22px] font-bold text-text-primary" style={{ marginBottom: schema.form.description ? 6 : 0 }}>
-//             {schema.form.title || schema.form.key}
-//           </h2>
-//           {schema.form.description && (
-//             <p className="text-[13px] text-text-secondary">{schema.form.description}</p>
-//           )}
-//         </div>
-
-//         {/* Fields */}
-//         <div className="px-8 py-6 flex flex-wrap gap-4">
-//           {fields.map(field => (
-//             <div
-//               key={field.id}
-//               style={{
-//                 width: field.width === 'half' ? 'calc(50% - 8px)' :
-//                        field.width === 'third' ? 'calc(33.3% - 11px)' : '100%',
-//               }}
-//             >
-//               <PreviewField
-//                 field={field}
-//                 value={values[field.id]}
-//                 onChange={v => updateValue(field.id, v)}
-//               />
-//             </div>
-//           ))}
-//         </div>
-
-//         {/* Footer */}
-//         <div className="px-8 pb-6 pt-4 flex gap-[10px] justify-end border-t border-border-default">
-//           {/* <button onClick={handleCancel}
-//           className="px-5 py-[9px] bg-transparent border border-border-default rounded-[10px] text-text-secondary font-display font-semibold text-[13px] cursor-pointer">
-//             {schema.form.cancelLabel || 'Cancel'}
-//           </button> */}
-//           <button
-//             onClick={handleSubmit}
-//             className="px-5 py-[9px] border-none rounded-[10px] text-white font-display font-bold text-[13px] cursor-pointer transition-all duration-200"
-//             style={{
-//               background: submitted ? '#00d4aa' : '#6c63ff',
-//               boxShadow: submitted ? '0 4px 16px rgba(0,212,170,0.4)' : '0 4px 20px rgba(108,99,255,0.25)',
-//             }}
-//           >
-//             {submitted ? '✓ Submitted!' : (schema.form.submitLabel || 'Submit')}
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-
-
 import React, { useState } from 'react';
 import { FormField, FormSchema } from '../types';
-import { motion } from 'framer-motion';
 
 interface FormPreviewProps {
   schema: FormSchema;
 }
 
-// Define the available screen sizes
-type ViewMode = 'laptop' | 'tablet' | 'mobile';
-
-const viewWidths: Record<ViewMode, string> = {
-  laptop: '100%', // Max-width 800px
-  tablet: '640px',
-  mobile: '375px',
-};
-
 export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
-<<<<<<< HEAD
   const rows = schema.form.rows || [];
   const fields = rows.flatMap(row => row.columns.map(col => col.field).filter(Boolean) as FormField[]);
-=======
-  const fields = schema.form.fields || [];
->>>>>>> 0214f98 (implemented dnd and proper scroll behaviour)
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -137,7 +25,9 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
       <div className="flex-1 flex flex-col items-center justify-center gap-3 text-text-muted p-10">
         <div className="text-[48px]">?</div>
         <p className="font-display text-[16px] font-semibold">No fields yet</p>
-        <p className="text-[13px]">Add fields to see your preview here.</p>
+        <p className="text-[13px] text-center max-w-[280px]">
+          Add fields from the left panel to see your form preview here.
+        </p>
       </div>
     );
   }
@@ -191,14 +81,13 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
               boxShadow: submitted ? '0 4px 16px rgba(0,212,170,0.4)' : '0 4px 20px rgba(108,99,255,0.25)',
             }}
           >
-            {submitted ? '? Submitted!' : (schema.form.submitLabel || 'Submit')}
+            {submitted ? '√ Submitted!' : (schema.form.submitLabel || 'Submit')}
           </button>
         </div>
       </div>
     </div>
   );
 };
-
 
 const inputClass = "w-full px-3 py-[9px] bg-bg-base border border-border-default rounded-[6px] text-text-primary text-[13px] outline-none font-body transition-colors duration-150 focus:border-border-focus focus:shadow-[0_0_0_3px_rgba(108,99,255,0.1)]";
 const labelClass = "block text-[12px] font-semibold text-text-secondary mb-[6px] tracking-[0.02em]";
