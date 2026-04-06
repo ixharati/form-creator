@@ -1,53 +1,55 @@
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
 :root {
-  --bg-base: #0a0a0f;
-  --bg-surface: #111118;
-  --bg-elevated: #18181f;
-  --bg-overlay: #1e1e28;
-  --bg-hover: #24242f;
+  /* ================= BACKGROUND ================= */
+  --bg-base: #f5f6f0;
+  --bg-surface: #f5f6f0;
+  --bg-elevated: #f5f6f0;
+  --bg-overlay: #f5f6f0;
+  --bg-primary: #ffbe0b;
 
-  --border: #2a2a38;
-  --border-light: #32323f;
-  --border-focus: #6c63ff;
+  /* ================= TEXT ================= */
+  --text-primary: #ffbe0b;
+  --text-secondary: #ffbe00;
+  --text-muted: #f2ec3b;
 
-  --text-primary: #f0f0fa;
-  --text-secondary: #9090aa;
-  --text-muted: #5a5a72;
-  --text-accent: #6c63ff;
+  /* ================= BORDERS ================= */
+  --border-default: #d6e5dd;
+  --border-focus: #ffbe0b;
 
-  --accent: #6c63ff;
-  --accent-glow: rgba(108, 99, 255, 0.25);
-  --accent-subtle: rgba(108, 99, 255, 0.1);
-  --accent-2: #ff6b9d;
-  --accent-3: #00d4aa;
-  --accent-4: #ffb347;
+  /* ================= BRAND (GREEN) ================= */
+  --accent: #ffbe0b;
+  --accent-hover: #ffbe0b;
+  --accent-light: #e6f4ec;
+  --accent-glow: rgba(235, 238, 35, 0.25);
+  --accent-subtle: rgba(18, 204, 126, 0.08);
 
-  --danger: #ff4d6d;
-  --danger-subtle: rgba(255, 77, 109, 0.1);
-  --success: #00d4aa;
-  --success-subtle: rgba(0, 212, 170, 0.1);
-  --warning: #ffb347;
+  /* ================= STATUS ================= */
+  --danger: #dc2626;
+  --danger-subtle: rgba(220, 38, 38, 0.1);
 
+  --success: #16a34a;
+  --success-subtle: rgba(22, 163, 74, 0.1);
+
+  --warning: #d97706;
+
+  /* ================= FONTS ================= */
   --font-display: 'Syne', sans-serif;
   --font-body: 'DM Sans', sans-serif;
 
+  /* ================= RADIUS ================= */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
   --radius-xl: 24px;
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
-  --shadow-accent: 0 4px 20px var(--accent-glow);
+  /* ================= SHADOWS ================= */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --shadow-accent: 0 4px 16px var(--accent-glow);
 
-  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  /* ================= TRANSITIONS ================= */
+  --transition: 0.2s ease;
+  --transition-slow: 0.35s ease;
 }
 
 html, body, #root {
@@ -56,8 +58,10 @@ html, body, #root {
 }
 
 body {
-  background: var(--bg-base);
-  color: var(--text-primary);
+  /* background: var(--bg-base); */
+  color: var(--text-primary
+  
+  );
   font-family: var(--font-body);
   font-size: 14px;
   line-height: 1.6;
@@ -117,4 +121,33 @@ button {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
   pointer-events: none;
   border-radius: inherit;
+}
+
+/* ── Resizable Panel Styles ── */
+[data-panel-group-direction="horizontal"] > [data-panel-resize-handle-id] {
+  width: 4px;
+  background: var(--border-light, #32323f);
+  cursor: col-resize;
+  position: relative;
+  transition: all 200ms ease;
+}
+
+[data-panel-group-direction="horizontal"] > [data-panel-resize-handle-id]:hover {
+  background: var(--accent, #6c63ff);
+  box-shadow: 0 0 12px rgba(108, 99, 255, 0.4), inset 0 0 8px rgba(108, 99, 255, 0.2);
+  width: 6px;
+}
+
+[data-panel-group-direction="horizontal"] > [data-panel-resize-handle-id][data-resize-handle-state="drag"] {
+  background: var(--accent, #6c63ff);
+  box-shadow: 0 0 16px rgba(108, 99, 255, 0.6), inset 0 0 12px rgba(108, 99, 255, 0.3);
+}
+
+/* Smooth panel transitions */
+[data-panel-group] {
+  overflow: hidden;
+}
+
+[data-panel] {
+  overflow: hidden;
 }
