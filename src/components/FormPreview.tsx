@@ -18,7 +18,11 @@ const viewWidths: Record<ViewMode, string> = {
 
 export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('laptop');
-  const fields = schema.form.fields || [];
+  // const fields = schema.form.fields || [];
+  const [activeSectionIndex, setActiveSectionIndex] = useState(0);
+  const sections = schema.form.sections || [];
+  const currentSection = sections[activeSectionIndex];
+  const fields = currentSection?.fields || [];
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -27,8 +31,19 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
   };
 
   const handleSubmit = () => {
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
+    if (activeSectionIndex < sections.length - 1) {
+      // Move to next section
+      setActiveSectionIndex(prev => prev + 1);
+    } else {
+      // Final submit
+      setSubmitted(true);
+      console.log("Final Form Data:", values);
+
+      setTimeout(() => {
+        setSubmitted(false);
+        setActiveSectionIndex(0); // reset if needed
+      }, 3000);
+    }
   };
 
   if (fields.length === 0) {
@@ -61,19 +76,18 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
       </div>
 
       {/* Preview Area */}
-      <div className="flex-1 overflow-y-auto p-8 flex justify-center bg-white">
+      <div className="flex-1 overflow-y-auto p-8 flex justify-center bg-[#f9f9f9]">
         <motion.div 
           animate={{ width: viewWidths[viewMode] }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="h-fit bg-white border border-[#e0e0e0] shadow-xl rounded-xl overflow-hidden max-w-[800px]"
-        >
+          className="h-fit bg-white border border-[#e0e0e0] shadow-xl"        >
           {/* Form header */}
           <div
             className="px-8 pt-7 pb-5 border-b border-[#e0e0e0]"
             style={{ background: '#ffffff', borderBottom: '2px solid #ffbe0b' }}
           >
             <h2 className="font-display text-[22px] font-bold text-[#2d2d2d]">
-              {schema.form.title || "Untitled Form"}
+              {currentSection?.title || "Untitled Section"}
             </h2>
             {schema.form.description && (
               <p className="text-[13px] text-[#4a4a4a] mt-1">{schema.form.description}</p>
@@ -97,24 +111,33 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ schema }) => {
                 />
               </div>
             ))}
+            
           </div>
 
           {/* Footer */}
           <div className="px-8 pb-6 pt-4 flex gap-[10px] justify-end border-t border-[#e0e0e0]">
-            <button 
-              className="px-5 py-[9px] bg-white border border-[#e0e0e0] rounded-[10px] text-[#2d2d2d] font-display font-semibold text-[13px] cursor-pointer hover:bg-[#f9f9f9]">
-                {schema.form.cancelLabel || 'Cancel'}
-          </button>
-            <button
-              onClick={handleSubmit}
-              className="px-6 py-2.5 rounded-lg text-[#2d2d2d] font-bold text-[13px] transition-all"
-              style={{
-                background: submitted ? '#ffa500' : '#ffbe0b',
-                boxShadow: '0 2px 8px rgba(255, 190, 11, 0.3)'
-              }}
-            >
-              {submitted ? '✓ Submitted!' : (schema.form.submitLabel || 'Submit')}
-            </button>
+            <div className="flex gap-[10px] justify-between">
+  
+              {/* Back Button */}
+              {activeSectionIndex > 0 && (
+                <button
+                  onClick={() => setActiveSectionIndex(prev => prev - 1)}
+                  className="px-5 py-2 border border-[#e0e0e0] rounded-lg"
+                >
+                  Back
+                </button>
+              )}
+
+              {/* Submit / Next */}
+              <button
+                onClick={handleSubmit}
+                className="px-6 py-2.5 bg-[#ffbe0b] rounded-lg font-bold"
+              >
+                {activeSectionIndex === sections.length - 1
+                  ? 'Submit'
+                  : 'Next'}
+              </button>
+            </div>
           </div>
         </motion.div>
       </div>
@@ -280,7 +303,7 @@ const PreviewField: React.FC<{
                     }}
                     className="w-[15px] h-[15px] accent-[#ffbe0b]"
                   />
-                  <span className="text-[13px] text-white">{opt.label}</span>
+                  <span className="text-[13px] text-[#2d2d2d]">{opt.label}</span>
                 </label>
               ))}
             </div>
@@ -294,8 +317,8 @@ const PreviewField: React.FC<{
               onChange={e => onChange(e.target.checked)}
               className="w-[15px] h-[15px] accent-[#ffbe0b]"
             />
-            <span className="text-[13px] text-white">
-              {field.placeholder || 'Check this option'}
+            <span className="text-[13px] text-[#2d2d2d]">
+                {field.placeholder || 'Check this option'}
             </span>
           </label>
         );
@@ -313,7 +336,7 @@ const PreviewField: React.FC<{
                   onChange={() => onChange(opt.value)}
                   className="w-[15px] h-[15px] accent-[#ffbe0b]"
                 />
-                <span className="text-[13px] text-white">{opt.label}</span>
+                <span className="text-[13px] text-[#2d2d2d]">{opt.label}</span>
               </label>
             ))}
           </div>
