@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormField, FieldType } from '../types';
+import { FormField, FieldType, FormRow } from '../types';
 import { FieldCard } from './FieldCard';
 import { FIELD_LABELS } from '../utils/helpers';
 import {
@@ -19,24 +19,24 @@ import {
 } from '@dnd-kit/sortable';
 
 interface BuilderCanvasProps {
-  fields: FormField[];
+  rows: FormRow[];
   selectedId: string | null;
   onSelectField: (id: string) => void;
   onDeleteField: (id: string) => void;
   onMoveField: (id: string, dir: 'up' | 'down') => void;
   onAddField: (type: FieldType) => void;
-  onReorderFields?: (reorderedFields: FormField[]) => void;
+  onReorderRows?: (reorderedRows: FormRow[]) => void;
   formTitle: string;
 }
 
 export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({
-  fields,
+  rows,
   selectedId,
   onSelectField,
   onDeleteField,
   onMoveField,
   onAddField,
-  onReorderFields,
+  onReorderRows,
   formTitle,
 }) => {
   const [dragOver, setDragOver] = React.useState(false);
@@ -56,11 +56,11 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      const oldIndex = fields.findIndex(f => f.id === active.id);
-      const newIndex = fields.findIndex(f => f.id === over.id);
+      const oldIndex = rows.findIndex(r => r.id === active.id);
+      const newIndex = rows.findIndex(r => r.id === over.id);
       if (oldIndex !== -1 && newIndex !== -1) {
-        const reordered = arrayMove(fields, oldIndex, newIndex);
-        onReorderFields?.(reordered);
+        const reordered = arrayMove(rows, oldIndex, newIndex);
+        onReorderRows?.(reordered);
       }
     }
   };
@@ -92,7 +92,7 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({
         </div>
 
         <span className="text-[11px] text-[#2d2d2d] bg-white/40 px-[10px] py-[3px] rounded-full border border-white/60">
-          {fields.length} field{fields.length !== 1 ? 's' : ''}
+          {rows.flatMap(r => r.columns).filter(c => c.field).length} field{rows.flatMap(r => r.columns).filter(c => c.field).length !== 1 ? 's' : ''}
         </span>
       </div>
 
@@ -110,7 +110,7 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
-          {fields.length === 0 ? (
+          {rows.length === 0 || rows.every(r => r.columns.every(c => !c.field)) ? (
             <div
               className={`flex-1 flex flex-col items-center justify-center gap-[14px] p-10 border-2 border-dashed border-[#e0e0e0] rounded-[24px] transition-all duration-200 min-h-[300px] ${
                 dragOver ? 'bg-[#fff8e1]' : 'bg-white'
@@ -149,22 +149,32 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({
           ) : (
             <div className="flex flex-col gap-2 w-full">
               <SortableContext
-                items={fields.map(f => f.id)}
+                items={rows.map(r => r.id)}
                 strategy={verticalListSortingStrategy}
               >
-                {fields.map((field, idx) => (
-                  <FieldCard
-                    key={field.id}
-                    field={field}
-                    index={idx}
-                    isSelected={selectedId === field.id}
-                    onSelect={() => onSelectField(field.id)}
-                    onDelete={() => onDeleteField(field.id)}
-                    onMoveUp={() => onMoveField(field.id, 'up')}
-                    onMoveDown={() => onMoveField(field.id, 'down')}
-                    isFirst={idx === 0}
-                    isLast={idx === fields.length - 1}
-                  />
+                {rows.map((row, rowIdx) => (
+                  <div key={row.id} className="flex gap-2">
+                    {row.columns.map((col, colIdx) => (
+                      <div key={col.id} style={{ width: `${col.width}%` }}>
+                        {col.field && (() => {
+                          const field = col.field!;
+                          return (
+                            <FieldCard
+                              field={field}
+                              index={rowIdx * 10 + colIdx}
+                              isSelected={selectedId === field.id}
+                              onSelect={() => onSelectField(field.id)}
+                              onDelete={() => onDeleteField(field.id)}
+                              onMoveUp={() => onMoveField(field.id, 'up')}
+                              onMoveDown={() => onMoveField(field.id, 'down')}
+                              isFirst={rowIdx === 0 && colIdx === 0}
+                              isLast={rowIdx === rows.length - 1 && colIdx === row.columns.length - 1}
+                            />
+                          );
+                        })()}
+                      </div>
+                    ))}
+                  </div>
                 ))}
               </SortableContext>
               {/* Drop hint at bottom */}
