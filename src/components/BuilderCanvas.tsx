@@ -27,6 +27,7 @@ interface BuilderCanvasProps {
   onAddField: (type: FieldType) => void;
   onReorderFields?: (reorderedFields: FormField[]) => void;
   formTitle: string;
+  onSaveForm?: () => void;
 }
 
 export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({
@@ -38,6 +39,7 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({
   onAddField,
   onReorderFields,
   formTitle,
+  onSaveForm,
 }) => {
   const [dragOver, setDragOver] = React.useState(false);
   const scrollableNodeRef = React.useRef<HTMLDivElement>(null);
@@ -91,9 +93,20 @@ export const BuilderCanvas: React.FC<BuilderCanvasProps> = ({
           </span>
         </div>
 
-        <span className="text-[11px] text-[#2d2d2d] bg-white/40 px-[10px] py-[3px] rounded-full border border-white/60">
-          {fields.length} field{fields.length !== 1 ? 's' : ''}
-        </span>
+        <div className="flex items-center gap-2">
+          {onSaveForm && fields.length > 0 && (
+            <button
+              onClick={onSaveForm}
+              className="px-3 py-1 bg-white text-[#ffbe0b] rounded font-semibold text-xs hover:opacity-90 transition-opacity border border-white/60"
+              title="Save Form"
+            >
+              💾 Save
+            </button>
+          )}
+          <span className="text-[11px] text-[#2d2d2d] bg-white/40 px-[10px] py-[3px] rounded-full border border-white/60">
+            {fields.length} field{fields.length !== 1 ? 's' : ''}
+          </span>
+        </div>
       </div>
 
       {/* Drop zone / field list */}

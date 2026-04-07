@@ -1,12 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import { FormSchema, FormField, FieldType, ActiveTab } from './types';
-import { INITIAL_SCHEMA, createDefaultField, generateFieldId, downloadJSON } from './utils/helpers';
+import { INITIAL_SCHEMA, createDefaultField, generateFieldId, downloadJSON, saveForm } from './utils/helpers';
 import { FieldPalette } from './components/FieldPalette';
 import { BuilderCanvas } from './components/BuilderCanvas';
 import { FieldEditor } from './components/FieldEditor';
 import { FormSettings } from './components/FormSettings';
 import { FormPreview } from './components/FormPreview';
 import { JSONView } from './components/JSONView';
+import { SavedForms } from './components/SavedForms';
 import { generateSectionId } from './utils/helpers';
 
 
@@ -187,7 +188,7 @@ export default function App() {
 
         {/* Tab switcher */}
         <div className="flex bg-white border border-[#e0e0e0] rounded-[10px] p-[3px] gap-[2px]">
-          {(['builder', 'preview', 'json'] as ActiveTab[]).map(tab => (
+          {(['builder', 'preview', 'json', 'forms'] as ActiveTab[]).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -197,7 +198,7 @@ export default function App() {
                   : 'bg-transparent border-transparent text-[#8a8a8a]'
               }`}
             >
-              {tab === 'builder' ? '⚙ Builder' : tab === 'preview' ? '◻ Preview' : '{ } JSON'}
+              {tab === 'builder' ? '⚙ Builder' : tab === 'preview' ? '◻ Preview' : tab === 'json' ? '{ } JSON' : '📄 Forms'}
             </button>
           ))}
         </div>
@@ -208,7 +209,16 @@ export default function App() {
             {fields.length} field{fields.length !== 1 ? 's' : ''}
           </span>
           {activeTab === 'builder' && fields.length > 0 && (
-            <HeaderBtn onClick={handleClearAll} danger>✕ Clear</HeaderBtn>
+            <>
+              <HeaderBtn onClick={() => {
+                const formName = prompt('Enter a name for your form:');
+                if (formName) {
+                  saveForm(schema, formName);
+                  alert('Form saved successfully!');
+                }
+              }} accent>💾 Save</HeaderBtn>
+              <HeaderBtn onClick={handleClearAll} danger>✕ Clear</HeaderBtn>
+            </>
           )}
           <HeaderBtn onClick={() => downloadJSON(schema)} accent> Export JSON</HeaderBtn>
         </div>
@@ -260,6 +270,13 @@ export default function App() {
                 onMoveField={() => {}}
                 onAddField={handleAddField}
                 formTitle={activeSection?.title || "No Section Selected"}
+                onSaveForm={() => {
+                  const formName = prompt('Enter a name for your form:');
+                  if (formName) {
+                    saveForm(schema, formName);
+                    alert('Form saved successfully!');
+                  }
+                }}
               />
 
             </div>
@@ -315,6 +332,21 @@ export default function App() {
         {/* JSON tab */}
         {activeTab === 'json' && (
           <JSONView schema={schema} onImport={handleImportSchema} />
+        )}
+
+        {/* Forms tab */}
+        {activeTab === 'forms' && (
+          <SavedForms
+            onLoadForm={(loadedSchema) => {
+              setSchema(loadedSchema);
+              setActiveTab('builder');
+              setSelectedFieldId(null);
+              setActiveSectionId(loadedSchema.form.sections?.[0]?.id || null);
+            }}
+            onDeleteForm={() => {
+              // Could refresh the saved forms list if needed
+            }}
+          />
         )}
       </div>
     </div>

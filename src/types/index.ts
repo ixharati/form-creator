@@ -94,7 +94,7 @@ export interface FormSchema {
   defaultLanguage: string;
 }
 
-export type ActiveTab = 'builder' | 'preview' | 'json';
+export type ActiveTab = 'builder' | 'preview' | 'json' | 'forms';
 
 export interface DragItem {
   id: string;

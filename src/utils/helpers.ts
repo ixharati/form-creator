@@ -48,8 +48,8 @@ export const FIELD_ICONS: Record<FieldType, string> = {
   multiselect: '☰',
   checkbox: '☑',
   radio: '◉',
-  date: '📅',
-  time: '⏱',
+  // date: '📅',
+  // time: '⏱',
   datetime: '📆',
   toggle: '⇌',
   range: '⇔',
@@ -69,8 +69,8 @@ export const FIELD_LABELS: Record<FieldType, string> = {
   button: 'Button',
   checkbox: 'Checkbox',
   radio: 'Radio Group',
-  date: 'Date',
-  time: 'Time',
+  // date: 'Date',
+  // time: 'Time',
   datetime: 'Date & Time',
   toggle: 'Toggle',
   range: 'Range Slider',
@@ -130,3 +130,24 @@ export const downloadJSON = (schema: FormSchema) => {
 
 export const generateSectionId = () => `section_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
 export const generateFieldId = () => `field_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+
+export const saveForm = (schema: FormSchema, name?: string) => {
+  const savedForms = JSON.parse(localStorage.getItem('savedForms') || '[]');
+  const formName = name || schema.form.title || schema.form.key || 'Untitled Form';
+
+  const savedForm = {
+    id: `form_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+    name: formName,
+    schema,
+    createdAt: new Date().toISOString(),
+  };
+
+  savedForms.push(savedForm);
+  localStorage.setItem('savedForms', JSON.stringify(savedForms));
+
+  return savedForm.id;
+};
+
+export const getSavedForms = () => {
+  return JSON.parse(localStorage.getItem('savedForms') || '[]');
+};
